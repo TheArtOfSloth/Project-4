@@ -1,0 +1,58 @@
+The following psuedocode converts a date and time to the number of seconds since the epoch (Jan 1, 1970)
+
+# array to hold number of days in each month
+month[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+
+dateToSeconds(year, month, day, hour, minute)
+	
+	# initialize seconds to start on jan 1 1970 00:00 since chrono starts @ f*cking dec 31 16:00
+	seconds = 0 + (8 * 60 * 60)
+	
+	# return 0 if the year is before the epoch
+	if year < 1970
+		return 0
+	endif
+	
+	# calculate seconds passed up to entered year	
+	for i = 1970 to (year - 1)
+		seconds += 31536000
+		
+		# add a day if leap and non centennial year 
+		if (i % 4 == 0) and (i % 100 != 0)
+			seconds += 86400
+		endif
+	
+	end loop
+	
+	# determine if entered year is a leap year (if so, add day to February)
+	if (year % 4 == 0) and (year % 100 != 0)
+		month[1] = 29
+	else
+		month[1] = 28
+	endif
+	
+	# calculate seconds passed up to entered month of entered year
+	for i = 1 to (month - 1)
+		for j = 1 to month[i-1]
+			seconds += 86400
+		end loop
+	end loop
+	
+	# calculate seconds passed up to entered day of entered month
+	for i = 1 to (day - 1)
+		seconds += 86400
+	end loop
+	
+	# calculate seconds passed up to entered hour of entered day
+	for i = 1 to (hour - 1)
+		seconds += 3600
+	end loop
+	
+	# calculate seconds passed up to entered minute
+	for i = 1 to minute
+		seconds += 60
+	end loop
+	
+	return seconds
+	
+end function
