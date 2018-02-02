@@ -1,5 +1,6 @@
 #ifndef EVENT_H
 #define EVENT_H 1
+#define _CRT_SECURE_NO_WARNINGS 0
 
 #include<chrono>
 #include<ctime>
