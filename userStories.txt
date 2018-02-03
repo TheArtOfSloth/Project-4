@@ -1,0 +1,6 @@
+User stories
+
+Draft one
+
+"I am a literal soccer mom. I need a program that can remind me to unplug my electric car after three hours (when it's done charging). I get home at various times each day and plug it in inside the garage, then come inside to check emails and facebook before starting dinner. Thus I need a progra that can remind me after three hours to unplug hte car to save power."
+
