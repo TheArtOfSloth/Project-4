@@ -1,0 +1,25 @@
+//polling loop pseudo-code
+
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<iomanip>
+#include<ctime>
+#include<chrono>
+#include<time.h>
+using namespace std;
+
+int main()
+{
+	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+	std::cout << "The time is: " << std::put_time(std::localtime(&now_c), "%F %T") << '\n';
+	int a;
+	cin >> a;
+	cout << endl;
+
+	return 0;
+}
+
+/*
+this just shows a basic way to read the system time out to the console
+*/
