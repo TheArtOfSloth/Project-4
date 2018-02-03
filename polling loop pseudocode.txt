@@ -8,14 +8,28 @@
 #include<time.h>
 using namespace std;
 
-int main()
+void poller(std::chrono::system_clock::time_point now, std::time_t now_c)
 {
-	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-	std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-	std::cout << "The time is: " << std::put_time(std::localtime(&now_c), "%F %T") << '\n';
+	now = chrono::system_clock::now();
+	now_c = chrono::system_clock::to_time_t(now);
+	cout << "The time is: " << put_time(localtime(&now_c), "%F %T") << '\n';
 	int a;
 	cin >> a;
-	cout << endl;
+	switch (a)
+	{
+	case 1:
+		poller(now, now_c);
+		break;
+	default:
+		break;
+	}
+};
+
+int main()
+{
+	chrono::system_clock::time_point now;
+	time_t now_c = chrono::system_clock::to_time_t(now);
+	poller(now, now_c);
 
 	return 0;
 }
