@@ -1,0 +1,6 @@
+C++ manual this_thread and yield
+
+c++ manual stop_until
+
+Project leader really likes these code snippits
+the manual being cplusplus.com/reference/thread/this_thread/yield/
