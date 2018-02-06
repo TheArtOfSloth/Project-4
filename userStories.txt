@@ -2,5 +2,8 @@ User stories
 
 Draft one
 
-"I am a literal soccer mom. I need a program that can remind me to unplug my electric car after three hours (when it's done charging). I get home at various times each day and plug it in inside the garage, then come inside to check emails and facebook before starting dinner. Thus I need a progra that can remind me after three hours to unplug hte car to save power."
+"I am a literal soccer mom. I need a program that can remind me to unplug my electric car after three hours (when it's done charging). I get home at various times each day and plug it in inside the garage, then come inside to check emails and facebook before starting dinner. Thus I need a progra that can remind me after three hours to unplug the car to save power."
 
+Draft two
+
+"I am an IRC nerd. I connect through my console. I tend to lose track of time when shooting the breeze with friends. I would appriciate a program that reminds me on the screen that I'm aready looking at of important events"
