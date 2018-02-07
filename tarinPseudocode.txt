@@ -5,7 +5,7 @@ alarm checking loop:
 while(running){
 
   check if next alarm has come yet
-    if yes, send alarm to the other thread
+    if yes, alarmGoingOff = true and playSound()
   
   sleep_until(one second)
   
