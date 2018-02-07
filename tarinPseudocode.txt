@@ -5,7 +5,9 @@ alarm checking loop:
 while(running){
 
   check if next alarm has come yet
-    if yes, alarmGoingOff = true and playSound()
+    if yes, alarmGoingOff = true
+    while(alarmgoingoff)
+      playSound()
   
   sleep_until(one second)
   
@@ -16,8 +18,12 @@ while(running){
 
   if alarmGoingOff
     prompt user to sleep it or to disable it
-      if sleep it, add one minute
-      if disable it, delete it from text file
+      if sleep it
+        add one minute
+        alarmgoingoff = false
+      if disable it
+        delete it from text file
+        alarmgoingoff = false
       
   else 
     switch statement:
