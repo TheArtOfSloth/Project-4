@@ -1,0 +1,17 @@
+
+
+while(running){
+
+  if alarm is going off
+    prompt user to sleep it or to disable it
+      if sleep it, add one minute
+      if disable it, delete it from text file
+      
+  check if user wants to exit
+    if yes, running = false
+    
+  check if next alarm has come yet
+  
+  sleep_until(one second)
+  
+}
