@@ -1,17 +1,28 @@
+global variable: alarmGoingOff
 
 
+alarm checking loop:
 while(running){
 
-  if alarm is going off
+  check if next alarm has come yet
+    if yes, send alarm to the other thread
+  
+  sleep_until(one second)
+  
+}
+
+polling loop:
+while(running){
+
+  if alarmGoingOff
     prompt user to sleep it or to disable it
       if sleep it, add one minute
       if disable it, delete it from text file
       
-  check if user wants to exit
-    if yes, running = false
-    
-  check if next alarm has come yet
-  
-  sleep_until(one second)
-  
+  else 
+    switch statement:
+    check if user wants to exit
+      if yes, running = false
+    check if the user wants to add or delete an alarm
+      if either, do that mess
 }
