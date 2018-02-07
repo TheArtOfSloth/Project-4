@@ -1,0 +1,9 @@
+This journal is going to be a lot more scatterbrained
+
+A huge amount of this project was paper prototyping with the team
+
+On the first friday I dealth with making user stories
+
+On the first monday I made a test file full of timestamps that we could use for the project. I also helped the group figure out what the time variables and structs are in C++
+
+On the wednesday before the test, Dan and I sat down for like 45 minutes just redoing our paper prototype and pseudocode. The results if that are in TarinPseudocode.txt, and that's a collaborative effort between he and I. As of this writing (12:30 PM) we are happy with our model of hte project
