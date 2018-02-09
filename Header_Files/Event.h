@@ -21,13 +21,13 @@ class Event
 	public:
 		Event();																		// Default constructor
 		Event(std::chrono::seconds alrm, std::string lbl) : alarm(alrm), label(lbl) {}	// Constructor taking std::chrono::seconds
-		Event(int time[NUM_DATE_PARAMS], std::string lbl);								// Constructor to take date array and convert to seconds
-		std::chrono::seconds getAlarm() const {return alarm;}							// Getter for alarm
-		std::string getLabel() const {return label;}									// Getter for label
-		void setAlarm(std::chrono::seconds alrm) {alarm = alrm;}
-		void setLabel(std::string lbl) {label = lbl;}
-		Event operator=(const Event &e);												// Overload '=' operator
-		friend std::ostream &operator<<(std::ostream &os, Event const &e);				// Overload '<<' operator
+		Event(int time[NUM_DATE_PARAMS], std::string lbl);				// Constructor to take date array and convert to seconds
+		std::chrono::seconds getAlarm() const {return alarm;}				// Getter for alarm
+		std::string getLabel() const {return label;}					// Getter for label
+		void setAlarm(std::chrono::seconds alrm) {alarm = alrm;}			// Setter for alarm
+		void setLabel(std::string lbl) {label = lbl;}					// Setter for label
+		Event operator=(const Event &e);						// Overload '=' operator
+		friend std::ostream &operator<<(std::ostream &os, Event const &e);		// Overload '<<' operator
 		~Event() {}
 	private:
 		int * getDate() const;
