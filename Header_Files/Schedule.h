@@ -1,5 +1,6 @@
 #ifndef SCHEDULE_H
 #define SCHEDULE_H 1
+#define _CRT_SECURE_NO_WARNINGS 1
 
 #include<chrono>
 #include<conio.h>
