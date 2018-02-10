@@ -7,3 +7,6 @@ On the first friday I dealth with making user stories
 On the first monday I made a test file full of timestamps that we could use for the project. I also helped the group figure out what the time variables and structs are in C++
 
 On the wednesday before the test, Dan and I sat down for like 45 minutes just redoing our paper prototype and pseudocode. The results if that are in TarinPseudocode.txt, and that's a collaborative effort between he and I. As of this writing (12:30 PM) we are happy with our model of hte project
+
+Friday
+With the majority of the program done, my team has set me up on preparing for the future. I've been researching how to do Shell_NotifyIcon popups with the one guy in our team with the glasses (pretty sure his name is Evan)
