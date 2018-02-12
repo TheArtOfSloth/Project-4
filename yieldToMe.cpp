@@ -17,7 +17,10 @@ void usering(int a)
 	{
 		if (alarmGoingOff)
 		{
-			cout << "Alarm going off! 1=snooze, 2=dismiss, other=exit" << endl;
+			cout << "Alarm going off!" << endl;
+			cout << "1 = Snooze" << endl;
+			cout << "2 = Dismiss" << endl;
+			cout << "Other = exit" << endl;
 			cin >> a;
 			cout << endl;
 			if (a == 1)
@@ -38,8 +41,10 @@ void usering(int a)
 		}
 		else
 		{
-			cout << "1=view next alarm, 2=add new alarm," << endl;
-			cout << "3=delete next alarm, 4 = exit program." << endl;
+			cout << "1 = View Next Alarm" << endl;
+			cout << "2 = Add New Alarm" << endl;
+			cout << "3 = Delete Next Alarm" << endl;
+			cout << "4 = Exit Program" << endl;
 			cin >> a;
 			cout << endl;
 			switch (a)
@@ -107,7 +112,7 @@ int main()
 	int b;
 	thread first(alarming);
 	thread second(usering, b);
-	cout << "ready as ever..." << endl;
+	//cout << "ready as ever..." << endl;
 	first.join();
 	second.join();
 	cout << endl << "done";
