@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "chrono": "cpp",
-        "xlocale": "cpp"
+        "xlocale": "cpp",
+        "thread": "cpp",
+        "utility": "cpp"
     }
 }
