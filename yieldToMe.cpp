@@ -7,17 +7,80 @@
 #include<thread>
 using namespace std;
 
+bool alarmGoingOff = false;
+bool isRunning = true;
+bool placeholder;	//holds place of comparison statements
+
 void usering(int a)
 {
-	cout << endl << "1 = again, else quit: " << endl;
-	cin >> a;
-	switch (a)
+	while (isRunning)
 	{
-	case 1:
-		usering(a);
-		break;
-	default:
-		break;
+		if (alarmGoingOff)
+		{
+			cout << "Alarm going off!" << endl;
+			cout << "1 = Snooze" << endl;
+			cout << "2 = Dismiss" << endl;
+			cout << "Other = exit" << endl;
+			cin >> a;
+			cout << endl;
+			if (a == 1)
+			{
+				alarmGoingOff = false;
+				//set alarm time for about 3 minutes in the future
+			}
+			else if (a == 2)
+			{
+				alarmGoingOff = false;
+				//delete alarm event
+			}
+			else
+			{
+				alarmGoingOff = false;	//to stop the other thread
+				isRunning = false;	//to exit both threads
+			}
+		}
+		else
+		{
+			cout << "1 = View Next Alarm" << endl;
+			cout << "2 = Add New Alarm" << endl;
+			cout << "3 = Delete Next Alarm" << endl;
+			cout << "4 = Exit Program" << endl;
+			cin >> a;
+			cout << endl;
+			switch (a)
+			{
+			case 1:
+			{
+				//view next alarm
+				break;
+			}
+			case 2:
+			{
+				//add new alarm
+				break;
+			}
+			case 3:
+			{
+				//delete next alarm
+				break;
+			}
+			case 4:
+			{
+				isRunning = false;
+				break;
+			}
+			case 5:
+			{
+				placeholder = true;
+				break;
+			}
+			default:
+			{
+				isRunning = false;
+				break;
+			}
+			}
+		}
 	}
 };
 
@@ -25,27 +88,31 @@ void alarming()
 {
 	using chrono::system_clock;
 	time_t tt = system_clock::to_time_t(system_clock::now());
-
 	struct tm * ptm = localtime(&tt);
-	cout << "Current time: " << put_time(ptm, "%X") << '\n';
-
-	cout << "Waiting for the next minute to begin...\n";
-	++ptm->tm_min; ptm->tm_sec = 0;
-	this_thread::sleep_until(system_clock::from_time_t(mktime(ptm)));
-
-	for (int i = 0; i < 5; i++)
+	while (isRunning)
 	{
-		cout << '\a';
+		tt = system_clock::to_time_t(system_clock::now());
+		ptm = localtime(&tt);
+		if (placeholder)	//if current time==alarm time
+		{
+			alarmGoingOff = true;
+			placeholder = false;
+		}
+		while (alarmGoingOff)
+		{
+			cout << '\a';
+			this_thread::sleep_for(chrono::seconds(1));
+		}
+		this_thread::sleep_for(chrono::seconds(1));
 	}
-	cout << "It's time!" << endl;
 };
 
 int main()
 {
 	int b;
-	thread first (alarming);
-	thread second (usering, b);
-	cout << "ready as ever..." << endl;
+	thread first(alarming);
+	thread second(usering, b);
+	//cout << "ready as ever..." << endl;
 	first.join();
 	second.join();
 	cout << endl << "done";

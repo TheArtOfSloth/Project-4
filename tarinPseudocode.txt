@@ -1,0 +1,34 @@
+global variable: alarmGoingOff
+
+
+alarm checking loop:
+while(running){
+
+  check if next alarm has come yet
+    if yes, alarmGoingOff = true
+    while(alarmgoingoff)
+      playSound()
+  
+  sleep_until(one second)
+  
+}
+
+polling loop:
+while(running){
+
+  if alarmGoingOff
+    prompt user to sleep it or to disable it
+      if sleep it
+        add one minute
+        alarmgoingoff = false
+      if disable it
+        delete it from text file
+        alarmgoingoff = false
+      
+  else 
+    switch statement:
+    check if user wants to exit
+      if yes, running = false
+    check if the user wants to add or delete an alarm
+      if either, do that mess
+}
