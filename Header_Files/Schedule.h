@@ -264,6 +264,7 @@ void Schedule::addAlarm()
 	while (nodeptr->next) nodeptr = nodeptr->next;
 	nodeptr->next = add;
 	sortList();
+	saveFile();
 }
 
 void Schedule::deleteNextAlarm()
