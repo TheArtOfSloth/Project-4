@@ -10,7 +10,10 @@
 #include<iomanip>
 #include<time.h>
 #include<thread>
+
 #include"Event.h"
+
+using namespace std;
 
 struct Node
 {
@@ -21,20 +24,19 @@ struct Node
 class Schedule
 {
 public:
-	Schedule(): list(nullptr) {}
+	Schedule() : list(nullptr) {}
 	Schedule(std::string);
 	void usering(int);
 	void alarming();
 	void threadTheNeedle();
-	void pollingLoop();
 protected:
-	void enterEvent(std::string);
+	void addAlarm();
+	void deleteNextAlarm();
 	void sortList();
-	void notify();
-	void saveFile();
 	bool isRunning;
 	bool alarmGoingOff;
 	bool placeholder;
+	void saveFile();
 private:
 	Node *list;
 	std::string eventname;
@@ -50,13 +52,13 @@ Schedule::Schedule(std::string filename)
 		Node *nodeptr = list;
 		long long int time;
 		std::string str;
-		while(!fin.eof())
+		while (!fin.eof())
 		{
 			nodeptr = new Node;
 			std::fin >> time;
 			std::fin.ignore();
 			std::getline(fin, str);
-			std::chrono::seconds s (time);
+			std::chrono::seconds s(time);
 			nodeptr->event = new Event(s, str);
 			nodeptr->next = nullptr;
 			nodeptr = nodeptr->next;
@@ -66,6 +68,7 @@ Schedule::Schedule(std::string filename)
 	}
 }
 
+/*
 void pollingLoop()
 {
 	Schedule *schedule = new Schedule("test.txt");
@@ -98,6 +101,9 @@ void pollingLoop()
 				enterEvent(input);
 			}
 		}
+	}
+}
+*/
 
 void Schedule::sortList()
 {
@@ -129,21 +135,19 @@ void Schedule::usering(int a)
 		if (alarmGoingOff)
 		{
 			cout << "Alarm going off!" << endl;
-			cout << "1 = Snooze" << endl;
-			cout << "2 = Dismiss" << endl;
+			cout << "1 = Dismiss" << endl;
 			cout << "Other = exit" << endl;
 			cin >> a;
 			cout << endl;
 			if (a == 1)
 			{
 				alarmGoingOff = false;
-				//set alarm time for about 3 minutes in the future
+				Node *nodeptr = list;
+				list = list->next;
+				delete nodeptr;
+				saveFile();
 			}
-			else if (a == 2)
-			{
-				alarmGoingOff = false;
-				//delete alarm event
-			}
+			else if (a == 2) alarmGoingOff = false;
 			else
 			{
 				alarmGoingOff = false;	//to stop the other thread
@@ -152,48 +156,49 @@ void Schedule::usering(int a)
 		}
 		else
 		{
-			cout << "1 = View Next Alarm" << endl;
-			cout << "2 = Add New Alarm" << endl;
-			cout << "3 = Delete Next Alarm" << endl;
-			cout << "4 = Exit Program" << endl;
+			cout << "1 - View Next Alarm" << endl;
+			cout << "2 - Add New Alarm" << endl;
+			cout << "3 - Delete Next Alarm" << endl;
+			cout << "4 - Exit Program" << endl;
 			cin >> a;
 			cout << endl;
 			switch (a)
 			{
-			case 1:
-			{
-				//view next alarm
-				break;
-			}
-			case 2:
-			{
-				//add new alarm
-				break;
-			}
-			case 3:
-			{
-				//delete next alarm
-				break;
-			}
-			case 4:
-			{
-				isRunning = false;
-				break;
-			}
-			case 5:
-			{
-				placeholder = true;
-				break;
-			}
-			default:
-			{
-				isRunning = false;
-				break;
-			}
+				case 1:
+				{
+					if (!list->next) std::cout << "No other scheduled event.\n";
+					else std::cout << list->next->event << std::endl;
+					break;
+				}
+				case 2:
+				{
+					addAlarm();
+					break;
+				}
+				case 3:
+				{
+					deleteNextAlarm();
+					break;
+				}
+				case 4:
+				{
+					isRunning = false;
+					break;
+				}
+				case 5:
+				{
+					placeholder = true;
+					break;
+				}
+				default:
+				{
+					isRunning = false;
+					break;
+				}
 			}
 		}
 	}
-};
+}
 
 void Schedule::alarming()
 {
@@ -204,7 +209,7 @@ void Schedule::alarming()
 	{
 		tt = system_clock::to_time_t(system_clock::now());
 		ptm = localtime(&tt);
-		if (placeholder)	//if current time==alarm time
+		if (placeholder || tt >= (time_t) list->event.getAlarm().count())	//if current time==alarm time
 		{
 			alarmGoingOff = true;
 			placeholder = false;
@@ -216,19 +221,19 @@ void Schedule::alarming()
 		}
 		this_thread::sleep_for(chrono::seconds(1));
 	}
-};
+}
 
 void Schedule::threadTheNeedle()
 {
-	
-	isRunning=true;
-	alarmGoingOff=false;
-	placeholder=false;
+
+	isRunning = true;
+	alarmGoingOff = false;
+	placeholder = false;
 	int b;
 	thread first(this->alarming);
 	thread second(this->usering, b);
 	first.join();
 	second.join();
-};
+}
 
 #endif
