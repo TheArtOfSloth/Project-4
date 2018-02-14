@@ -10,3 +10,6 @@ On the wednesday before the test, Dan and I sat down for like 45 minutes just re
 
 Friday
 With the majority of the program done, my team has set me up on preparing for the future. I've been researching how to do Shell_NotifyIcon popups with the one guy in our team with the glasses (pretty sure his name is Evan)
+
+Valentine's day
+Since we might not need Shell_NotifyIcon I'm also looking at signals, see what the most effective way to sent a notification from an alarm loop in one thread to another thread
