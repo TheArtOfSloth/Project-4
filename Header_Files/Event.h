@@ -19,7 +19,7 @@ enum date {YEAR, MONTH, DAY, HOUR, MINUTE};
 class Event
 {
 	public:
-		Event();																		// Default constructor
+		Event();									// Default constructor
 		Event(std::chrono::seconds alrm, std::string lbl) : alarm(alrm), label(lbl) {}	// Constructor taking std::chrono::seconds
 		Event(int time[NUM_DATE_PARAMS], std::string lbl);				// Constructor to take date array and convert to seconds
 		std::chrono::seconds getAlarm() const {return alarm;}				// Getter for alarm
