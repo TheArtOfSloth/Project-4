@@ -236,4 +236,15 @@ void Schedule::threadTheNeedle()
 	second.join();
 }
 
+void Schedule::deleteNextAlarm()
+{
+	if (!list->next) std::cout << "No scheduled event.\n";
+	else
+	{
+		Node *nodeptr = list->next;
+		list->next = nodeptr->next;
+		delete nodeptr;
+	}
+}
+
 #endif
