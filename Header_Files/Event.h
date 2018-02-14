@@ -28,7 +28,7 @@ class Event
 		void setLabel(std::string lbl) {label = lbl;}					// Setter for label
 		Event operator=(const Event &e);						// Overload '=' operator
 		friend std::ostream &operator<<(std::ostream &os, Event const &e);		// Overload '<<' operator
-		~Event() {}
+		~Event() {}									// Destructor
 	private:
 		int * getDate() const;
 		void setAlarmFromDate(int time[NUM_DATE_PARAMS]);
