@@ -257,7 +257,7 @@ void Schedule::addAlarm()
 	std::cout << "Enter minute(0 - 59): ";
 	std::cin >> date[MINUTE];
 	std::cin.ignore(1000, 10);
-	Node add = new Node;
+	Node *add = new Node;
 	add->event = new Event(date, lbl);
 	add->next = nullptr;
 	Node *nodeptr = list;
