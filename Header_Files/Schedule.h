@@ -10,6 +10,7 @@
 #include<iomanip>
 #include<time.h>
 #include<thread>
+#include <string>
 
 #include"Event.h"
 
@@ -25,7 +26,7 @@ class Schedule
 {
 public:
 	Schedule() : list(nullptr) {}
-	Schedule(std::string);
+	Schedule(std::string& filename);
 	void usering(int);
 	void alarming();
 	void threadTheNeedle();
@@ -37,16 +38,23 @@ protected:
 	bool alarmGoingOff;
 	bool placeholder;
 	void saveFile();
+	std::string setFileName();
 private:
-	Node *list;
+	Node * list;
 	std::string eventname;
+	std::string filename;
 };
 
-Schedule::Schedule(std::string filename)
+std::string Schedule::setFileName() {
+	filename = "test.txt";
+	return filename;
+}
+
+Schedule::Schedule(std::string& filename)
 {
 	std::ifstream fin;
-	std::fin.open(filename);
-	if (!std::fin.good()) list = nullptr;
+	fin.open(filename);
+	if (!fin.good()) list = nullptr;
 	else
 	{
 		Node *nodeptr = list;
@@ -55,15 +63,15 @@ Schedule::Schedule(std::string filename)
 		while (!fin.eof())
 		{
 			nodeptr = new Node;
-			std::fin >> time;
-			std::fin.ignore();
-			std::getline(fin, str);
+			fin >> time;
+			fin.ignore();
+			getline(fin, str);
 			std::chrono::seconds s(time);
 			nodeptr->event = new Event(s, str);
 			nodeptr->next = nullptr;
 			nodeptr = nodeptr->next;
 		}
-		std::fin.close();
+		//fin.close();
 		sortList();
 	}
 }
@@ -71,37 +79,37 @@ Schedule::Schedule(std::string filename)
 /*
 void pollingLoop()
 {
-	Schedule *schedule = new Schedule("test.txt");
-	while (list->event.getAlarm() < std::chrono::system_clock::now().time_since_epoch() || !list)
-	{
-		Node *prevptr = list;
-		list = list->next;
-		delete prevptr;
-	}
-	saveFile();
-	while (eventname != "EXIT")
-	{
-		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-		std::chrono::duration epoch now.time_since_epoch();
-		std::chrono::seconds secs = std::chrono::duration_cast<std::chrono::seconds>(epoch);
-		if (secs.count() >= list->event.getAlarm().count())
-		{
-			notify();
-			system("pause");
-		}
-		else;
-		std::string input = "";
-		while (getline(std::cin, input))
-		{
-			if (input.empty()) break;
-			else
-			{
-				eventname = input;
-				std::cout << input << std::endl << "Enter name of new event or exit: ";
-				enterEvent(input);
-			}
-		}
-	}
+Schedule *schedule = new Schedule("test.txt");
+while (list->event.getAlarm() < std::chrono::system_clock::now().time_since_epoch() || !list)
+{
+Node *prevptr = list;
+list = list->next;
+delete prevptr;
+}
+saveFile();
+while (eventname != "EXIT")
+{
+std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+std::chrono::duration epoch now.time_since_epoch();
+std::chrono::seconds secs = std::chrono::duration_cast<std::chrono::seconds>(epoch);
+if (secs.count() >= list->event.getAlarm().count())
+{
+notify();
+system("pause");
+}
+else;
+std::string input = "";
+while (getline(std::cin, input))
+{
+if (input.empty()) break;
+else
+{
+eventname = input;
+std::cout << input << std::endl << "Enter name of new event or exit: ";
+enterEvent(input);
+}
+}
+}
 }
 */
 
@@ -112,8 +120,8 @@ void Schedule::sortList()
 	{
 		Node *nextptr = nodeptr->next;
 		while (nextptr)
-		{
-			if (nodeptr->event.getAlarm() > nextptr->event.getAlarm())
+		{   //Error
+			if (nodeptr->event->getAlarm() > nextptr->event->getAlarm())
 			{
 				Event *temp = new Event();
 				temp = nodeptr->event;
@@ -164,37 +172,37 @@ void Schedule::usering(int a)
 			cout << endl;
 			switch (a)
 			{
-				case 1:
-				{
-					if (!list->next) std::cout << "No other scheduled event.\n";
-					else std::cout << list->next->event << std::endl;
-					break;
-				}
-				case 2:
-				{
-					addAlarm();
-					break;
-				}
-				case 3:
-				{
-					deleteNextAlarm();
-					break;
-				}
-				case 4:
-				{
-					isRunning = false;
-					break;
-				}
-				case 5:
-				{
-					placeholder = true;
-					break;
-				}
-				default:
-				{
-					isRunning = false;
-					break;
-				}
+			case 1:
+			{
+				if (!list->next) std::cout << "No other scheduled event.\n";
+				else std::cout << list->next->event << std::endl;
+				break;
+			}
+			case 2:
+			{
+				addAlarm();
+				break;
+			}
+			case 3:
+			{
+				deleteNextAlarm();
+				break;
+			}
+			case 4:
+			{
+				isRunning = false;
+				break;
+			}
+			case 5:
+			{
+				placeholder = true;
+				break;
+			}
+			default:
+			{
+				isRunning = false;
+				break;
+			}
 			}
 		}
 	}
@@ -208,8 +216,8 @@ void Schedule::alarming()
 	while (isRunning)
 	{
 		tt = system_clock::to_time_t(system_clock::now());
-		ptm = localtime(&tt);
-		if (placeholder || tt >= (time_t) list->event.getAlarm().count())	//if current time==alarm time
+		ptm = localtime(&tt);    //Syntax error
+		if (placeholder || tt >= (time_t)list->event->getAlarm().count())	//if current time==alarm time
 		{
 			alarmGoingOff = true;
 			placeholder = false;
@@ -230,41 +238,11 @@ void Schedule::threadTheNeedle()
 	alarmGoingOff = false;
 	placeholder = false;
 	int b;
-	thread first(this->alarming);
-	thread second(this->usering, b);
-	first.join();
-	second.join();
-}
-
-void Schedule::addAlarm()
-{
-	int *date = new int[NUM_DATE_PARAMS];
-	std::string lbl;
-	std::cout << "Enter name of event: ";
-	std::getline(cin, lbl);
-	std::cout << "Enter year: ";
-	std::cin >> date[YEAR];
-	std::cin.ignore(1000, 10);
-	std::cout << "Enter month (1 - 12): ";
-	std::cin >> date[MONTH];
-	std::cin.ignore(1000, 10);
-	std::cout << "Enter day: ";
-	std::cin >> date[DAY];
-	std::cin.ignore(1000, 10);
-	std::cout << "Enter hour (0 - 23): ";
-	std::cin >> date[HOUR];
-	std::cin.ignore(1000, 10);
-	std::cout << "Enter minute(0 - 59): ";
-	std::cin >> date[MINUTE];
-	std::cin.ignore(1000, 10);
-	Node *add = new Node;
-	add->event = new Event(date, lbl);
-	add->next = nullptr;
-	Node *nodeptr = list;
-	while (nodeptr->next) nodeptr = nodeptr->next;
-	nodeptr->next = add;
-	sortList();
-	saveFile();
+	//thread first(this->alarming);
+	//Syntax Error with threading
+	//thread second(this->usering, b);
+	//first.join();
+	//second.join();
 }
 
 void Schedule::deleteNextAlarm()
@@ -276,6 +254,18 @@ void Schedule::deleteNextAlarm()
 		list->next = nodeptr->next;
 		delete nodeptr;
 	}
+}
+
+void Schedule::saveFile() {
+	std::fstream file;
+	file.open(filename); //Should be test.txt.
+	Node* nodeptr = list;
+	while (!file.eof) {
+		while (nodeptr != nullptr) {
+			nodeptr = nodeptr->next;
+		}
+	}
+	sortList();
 }
 
 #endif
