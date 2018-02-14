@@ -32,6 +32,9 @@ protected:
 	void sortList();
 	void notify();
 	void saveFile();
+	bool isRunning;
+	bool alarmGoingOff;
+	bool placeholder;
 private:
 	Node *list;
 	std::string eventname;
@@ -217,6 +220,10 @@ void Schedule::alarming()
 
 void Schedule::threadTheNeedle()
 {
+	
+	isRunning=true;
+	alarmGoingOff=false;
+	placeholder=false;
 	int b;
 	thread first(this->alarming);
 	thread second(this->usering, b);
