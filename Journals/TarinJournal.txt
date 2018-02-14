@@ -13,3 +13,6 @@ With the majority of the program done, my team has set me up on preparing for th
 
 Valentine's day
 Since we might not need Shell_NotifyIcon I'm also looking at signals, see what the most effective way to sent a notification from an alarm loop in one thread to another thread
+Signals and signal.h are the obvious way, but that only works in linux and we need the program IDs of each thread and program (forking would be involved... not looking forward to prototyping that)
+The other option is to add our code as a seperate thread to another program... that's the simplest but is up to the whims of other users...
+Hmm, what if we set up our alarm stuff as a library that can be included in other programs?
