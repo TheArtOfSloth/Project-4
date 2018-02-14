@@ -236,6 +236,36 @@ void Schedule::threadTheNeedle()
 	second.join();
 }
 
+void Schedule::addAlarm()
+{
+	int *date = new int[NUM_DATE_PARAMS];
+	std::string lbl;
+	std::cout << "Enter name of event: ";
+	std::getline(cin, lbl);
+	std::cout << "Enter year: ";
+	std::cin >> date[YEAR];
+	std::cin.ignore(1000, 10);
+	std::cout << "Enter month (1 - 12): ";
+	std::cin >> date[MONTH];
+	std::cin.ignore(1000, 10);
+	std::cout << "Enter day: ";
+	std::cin >> date[DAY];
+	std::cin.ignore(1000, 10);
+	std::cout << "Enter hour (0 - 23): ";
+	std::cin >> date[HOUR];
+	std::cin.ignore(1000, 10);
+	std::cout << "Enter minute(0 - 59): ";
+	std::cin >> date[MINUTE];
+	std::cin.ignore(1000, 10);
+	Node add = new Node;
+	add->event = new Event(date, lbl);
+	add->next = nullptr;
+	Node *nodeptr = list;
+	while (nodeptr->next) nodeptr = nodeptr->next;
+	nodeptr->next = add;
+	sortList();
+}
+
 void Schedule::deleteNextAlarm()
 {
 	if (!list->next) std::cout << "No scheduled event.\n";
