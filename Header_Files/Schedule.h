@@ -10,7 +10,7 @@
 #include<iomanip>
 #include<time.h>
 #include<thread>
-#include <string>
+#include<string>
 
 #include"Event.h"
 
@@ -27,7 +27,7 @@ class Schedule
 public:
 	Schedule() : list(nullptr) {}
 	Schedule(std::string& filename);
-	void usering(int);
+	void usering();
 	void alarming();
 	void threadTheNeedle();
 protected:
@@ -136,8 +136,9 @@ void Schedule::sortList()
 	}
 }
 
-void Schedule::usering(int a)
+void Schedule::usering()
 {
+	int a;
 	while (isRunning)
 	{
 		if (alarmGoingOff)
@@ -237,12 +238,11 @@ void Schedule::threadTheNeedle()
 	isRunning = true;
 	alarmGoingOff = false;
 	placeholder = false;
-	//int b;
-	//thread first(this->alarming);
+	std::thread first(&Schedule::alarming);
 	//Syntax Error with threading
-	//thread second(this->usering, b);
-	//first.join();
-	//second.join();
+	std::thread second(&Schedule::usering);
+	first.join();
+	second.join();
 }
 
 void Schedule::deleteNextAlarm()
