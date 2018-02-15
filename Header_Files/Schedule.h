@@ -222,10 +222,17 @@ void Schedule::alarming()
 	{
 		tt = system_clock::to_time_t(system_clock::now());
 		ptm = localtime(&tt);    //Syntax error
-		if (placeholder || tt >= (time_t)list->event->getAlarm().count())	//if current time==alarm time
+		if (list == nullptr)
 		{
-			alarmGoingOff = true;
-			placeholder = false;
+			return;
+		}
+		else
+		{
+			if (placeholder || tt >= (time_t)list->event->getAlarm().count())	//if current time==alarm time
+			{
+				alarmGoingOff = true;
+				placeholder = false;
+			}
 		}
 		while (alarmGoingOff)
 		{
