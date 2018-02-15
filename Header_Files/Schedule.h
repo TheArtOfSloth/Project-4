@@ -14,6 +14,8 @@
 
 #include"Event.h"
 
+
+
 using namespace std;
 
 struct Node
@@ -43,6 +45,8 @@ private:
 	Node * list;
 	std::string eventname;
 	std::string filename;
+	std::thread t1;
+	std::thread t2;
 };
 
 std::string Schedule::setFileName() {
@@ -238,11 +242,11 @@ void Schedule::threadTheNeedle()
 	isRunning = true;
 	alarmGoingOff = false;
 	placeholder = false;
-	std::thread first(&Schedule::alarming);
+	t1 = std::thread(&Schedule::alarming, this);
 	//Syntax Error with threading
-	std::thread second(&Schedule::usering);
-	first.join();
-	second.join();
+	t2 = std::thread(&Schedule::usering, this);
+	t1.join();
+	t2.join();
 }
 
 void Schedule::deleteNextAlarm()
