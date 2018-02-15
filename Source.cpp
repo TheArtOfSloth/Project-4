@@ -1,4 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS 1
+
 #include<chrono>
 #include<conio.h>
 #include<ctime>
@@ -15,6 +16,8 @@ using namespace std;
 
 int main()
 {
-
+	string c = "timestamps.txt";
+	Schedule b(c);
+	b.threadTheNeedle();
 	return 0;
 }
