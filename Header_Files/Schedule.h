@@ -49,6 +49,7 @@ public:
 protected:
 	void addAlarm();			// Function to create a new alarm
 	void alarmLoop();			// Loop to handle when an alarm is activated
+	void userLoop();
 	void removeNextAlarm();		// Function to delete the next alarm
 	void saveFile();			// Function to save file
 	void sortList();			// Function to order the list of alarms
@@ -56,8 +57,8 @@ protected:
 private:
 	bool isRunning, soundAlarm;
 	Node *head;
-	std::string filename;
-	std::thread t1;
+	std::string command, filename;
+	std::thread t1, t2;
 };
 
 /**
@@ -65,12 +66,13 @@ private:
 * Re-saves file after closing.
 * @param	string representing an existing file name
 */
-Schedule::Schedule(std::string filename) : head(nullptr), filename(filename), isRunning(true), soundAlarm(false)
+Schedule::Schedule(std::string filename) : command(""), filename(filename), isRunning(true), soundAlarm(false)
 {
 	std::ifstream fin;
 	fin.open(filename);
 	if (!fin.good()) throw std::invalid_argument("ERROR: File does not exist."); else;
-	Node *nodeptr = head;
+	Node *nodeptr = nullptr;
+	head = nodeptr;
 	long long int alarm;
 	std::string label;
 	while (!fin.eof())
@@ -79,8 +81,7 @@ Schedule::Schedule(std::string filename) : head(nullptr), filename(filename), is
 		fin >> alarm;
 		fin.ignore();
 		std::getline(fin, label);
-		Event *temp = new Event(alarm, label);
-		nodeptr->event = *temp;
+		nodeptr->event.set(alarm, label);
 		nodeptr->next = nullptr;
 		nodeptr = nodeptr->next;
 	}
@@ -109,6 +110,7 @@ void Schedule::pollingLoop()
 {
 	bool printOutput = true;
 	t1 = std::thread(&Schedule::alarmLoop, this);	// Execute background alarm loop
+	t2 = std::thread(&Schedule::userLoop, this);	// Execute background input loop
 	while (isRunning)
 	{
 		if (soundAlarm)
@@ -116,52 +118,14 @@ void Schedule::pollingLoop()
 			printOutput = true;	// Re-print output
 			t1.join(); // Spin lock until alarm is dealt with
 			t1 = std::thread(&Schedule::alarmLoop, this); // Re-execute alarmLoop thread
+		} else;
+		if (!command.empty() || command != "")
+		{
+			t2.join();
+			printOutput = true;
+			t2 = std::thread(&Schedule::userLoop, this);
 		}
 		else;
-		if (printOutput)
-		{
-			printOutput = false;
-			std::cout << "1 - View Next Alarm" << std::endl;
-			std::cout << "2 - Add New Alarm" << std::endl;
-			std::cout << "3 - Delete Next Alarm" << std::endl;
-			std::cout << "0 - Exit Program" << std::endl;
-			std::cout << "Enter command: ";
-		}
-		else;
-		std::string command = "";
-		while (std::getline(std::cin, command))
-		{
-			if (command.empty()) break;
-			else
-			{
-				/*
-				switch (command)
-				{
-				case "1":
-					viewNextAlarm();
-					break;
-				case "2":
-					addAlarm();
-					break;
-				case "3":
-					removeNextAlarm();
-					break;
-				case "0":
-					isRunning = false;
-					break;
-				default:
-					std::cout << "ERROR: Invalid command.\n";
-				} // switch(command)
-				*/
-				if (command == "1") viewNextAlarm();
-				else if (command == "2") addAlarm();
-				else if (command == "3") removeNextAlarm();
-				else if (command == "0") isRunning = false;
-				else std::cout << "ERROR: Invalid command.\n";
-				command = "";
-				printOutput = true;
-			} // else
-		} // while(std::getline(cin, command))
 	} // while(isRunning)
 }
 
@@ -185,9 +149,8 @@ Schedule::~Schedule()
 */
 void Schedule::addAlarm()
 {
-	bool isGood;
+	bool isGood = true;
 	int *date = new int[NUM_DATE_PARAMS];
-	char slash;
 	date[YEAR] = 1970; date[MONTH] = 1; date[DAY] = 1; date[HOUR] = 0; date[MINUTE] = 0;
 	std::string label = "";
 	// Enter event label
@@ -203,7 +166,6 @@ void Schedule::addAlarm()
 		{
 			std::cout << "ERROR: Date entered incorrectly.\n";
 			isGood = false;
-			continue;
 		}
 		else;
 		std::cin >> date[DAY];
@@ -211,7 +173,6 @@ void Schedule::addAlarm()
 		{
 			std::cout << "ERROR: Date entered incorrectly.\n";
 			isGood = false;
-			continue;
 		}
 		else;
 		std::cin >> date[YEAR];
@@ -219,7 +180,6 @@ void Schedule::addAlarm()
 		{
 			std::cout << "ERROR: Date entered incorrectly.\n";
 			isGood = false;
-			continue;
 		}
 		else;
 		if (date[YEAR] < 1970) { std::cout << "ERROR: Year mus be greater than 1970.\n"; isGood = false; }
@@ -229,68 +189,66 @@ void Schedule::addAlarm()
 		else if (date[DAY] < 1 || date[DAY] > months[date[MONTH] - 1]) { std::cout << "ERROR: Day must be a valid calander date.\n"; isGood = false; }
 		else;
 	} while (!isGood);
-		// Enter event time
-		do
+	// Enter event time
+	do
+	{
+		std::cout << "Please enter the time of the scheduled event in military time [HH:MM]: ";
+		std::cin >> date[HOUR];
+		if (std::cin.get() != ':')
 		{
-			std::cout << "Please enter the time of the scheduled event in military time [HH:MM]: ";
-			std::cin >> date[HOUR];
-			if (std::cin.get() != ':')
-			{
-				std::cout << "ERROR: Time entered incorrectly.\n";
-				isGood = false;
-				continue;
-			}
-			else;
+			std::cout << "ERROR: Time entered incorrectly.\n";
+			isGood = false;
+		}
+		else;
 		std::cin >> date[MINUTE];
-			bool isGood = true;
-			if (date[HOUR] < 0 || date[HOUR] > 23)
-			{
-				std::cout << "ERROR: Hour must be between 0 and 23.\n";
-				isGood = false;
-			}
-			else;
-			if (date[MINUTE] < 0 || date[MINUTE] > 59)
-			{
-				std::cout << "ERROR: Minute must be between 0 and 59.\n";
-				isGood = false;
-			}
-			else;
-		} while (!isGood);
-			// Check time for current event
-			Event *event = new Event(date, label);
-		time_t current = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-		time_t alarm = std::chrono::system_clock::to_time_t(event.getAlarmAsInt());
-		if (alarm <= current)
+		bool isGood = true;
+		if (date[HOUR] < 0 || date[HOUR] > 23)
 		{
-			std::cout << "ERROR: Event scheduled before current time.\n";
-			delete event;
+			std::cout << "ERROR: Hour must be between 0 and 23.\n";
+			isGood = false;
+		}
+		else;
+		if (date[MINUTE] < 0 || date[MINUTE] > 59)
+		{
+			std::cout << "ERROR: Minute must be between 0 and 59.\n";
+			isGood = false;
+		}
+		else;
+	} while (!isGood);
+	// Check time for current event
+	Event *event = new Event(date, label);
+	time_t current = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	if (event->getAlarmAsInt() <= current)
+	{
+		std::cout << "ERROR: Event scheduled before current time.\n";
+		delete event;
+	}
+	else
+	{
+		// Add event to list
+		Node *newNode = new Node;
+		newNode->event = *event;
+		newNode->next = nullptr;
+		if (!head) head = newNode;
+		else if (newNode->event.getAlarmAsInt() < head->event.getAlarmAsInt())
+		{
+			newNode->next = head;
+			head = newNode;
 		}
 		else
 		{
-			// Add event to list
-			Node *newNode = new Node;
-			newNode->event = event;
-			newNode->next = nullptr;
-			if (!head) head = newNode;
-			else if (newNode->event.getAlarmAsInt() < head->event.getAlarmAsInt())
+			Node *prevptr = head;
+			Node *nodeptr = head->next;
+			while (nodeptr || newNode->event.getAlarmAsInt() > nodeptr->event.getAlarmAsInt())
 			{
-				newNode->next = head;
-				head = newNode;
+				nodeptr = nodeptr->next;
+				prevptr = prevptr->next;
 			}
-			else
-			{
-				Node *prevptr = head;
-				Node *nodeptr = head->next;
-				while (nodeptr || newNode->event.getAlarmAsInt() > nodeptr->event.getAlarmAsInt())
-				{
-					nodeptr = nodeptr->next;
-					prevptr = prevptr->next;
-				}
-				newNode->next = nodeptr;
-				prevptr->next = newNode;
-			}
-			saveFile();
+			newNode->next = nodeptr;
+			prevptr->next = newNode;
 		}
+		saveFile();
+	}
 }
 
 /**
@@ -304,25 +262,25 @@ void Schedule::alarmLoop()
 	{
 		time_t current = system_clock::to_time_t(system_clock::now());
 		if (!head) soundAlarm = false;
-		else if (current >= head->event.getAlarmAsInt()) soundAlarm = true;
+		else if ((long long int) current >= head->event.getAlarmAsInt()) soundAlarm = true;
 		else soundAlarm = false;
-		this_thread::sleep_for(chrono::seconds(1));
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 	while (soundAlarm)
 	{
 		bool printAlarm = true;
 		if (printAlarm)
 		{
-			std::cout << "Alert: " << list->event << std::endl;
+			std::cout << "Alert: " << head->event << std::endl;
 			std::cout << "Press any key to dismiss...\n";
 			printAlarm = false;
 		}
 		else;
 		std::string exit = "";
-		while (std::getline(cin, exit))
+		while (std::getline(std::cin, exit))
 		{
 			std::cout << "\a";
-			this_thread::sleep_for(chrono::seconds(1));
+			std::this_thread::sleep_for(std::chrono::seconds(1));
 			if (exit.empty()) break;
 			else
 			{
@@ -335,6 +293,39 @@ void Schedule::alarmLoop()
 			}
 		}
 	}
+}
+
+/**
+ * Thread function to handle user input.
+ */
+void Schedule::userLoop()
+{
+	bool printOutput = true;
+	command.clear();
+	if (printOutput)
+	{
+		printOutput = false;
+		std::cout << "1 - View Next Alarm" << std::endl;
+		std::cout << "2 - Add New Alarm" << std::endl;
+		std::cout << "3 - Delete Next Alarm" << std::endl;
+		std::cout << "0 - Exit Program" << std::endl;
+		std::cout << "Enter command: ";
+	}
+	else;
+	while (std::getline(std::cin, command))
+	{
+		if (command.empty()) break;
+		else
+		{
+			if (command == "1") viewNextAlarm();
+			else if (command == "2") addAlarm();
+			else if (command == "3") removeNextAlarm();
+			else if (command == "0") isRunning = false;
+			else std::cout << "ERROR: Invalid command.\n";
+			command.clear();
+			printOutput = true;
+		} // else
+	} // while(std::getline(cin, command))
 }
 
 /**
@@ -373,7 +364,7 @@ void Schedule::saveFile()
 */
 void Schedule::sortList()
 {
-	Node *nodeptr = list;
+	Node *nodeptr = head;
 	while (nodeptr)
 	{
 		Node *nextptr = nodeptr->next;
@@ -381,10 +372,10 @@ void Schedule::sortList()
 		{   //Error
 			if (nodeptr->event.getAlarm() > nextptr->event.getAlarm())
 			{
-				Event *temp = new Event();
+				//Event *temp = new Event();
 				nodeptr->event = nextptr->event;
-				nextptr->event = temp;
-				delete temp;
+				nextptr->event = *(new Event());
+				//delete temp;
 			}
 			else;
 			nextptr = nextptr->next;
@@ -398,9 +389,8 @@ void Schedule::sortList()
 */
 void Schedule::viewNextAlarm()
 {
-	if (head) std::cout << "Next event: " << head - event << std::endl;
+	if (head) std::cout << "Next event: " << head->event << std::endl;
 	else std::cout << "No upcoming events.\n";
 }
 
 #endif
-
