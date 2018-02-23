@@ -24,11 +24,11 @@ const int PST_ADJUST = 8 * 60 * 60;						// Integer to hold time adjustment for 
 int months[MAX_NUM_MONTHS] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	// Integer array representing the number of days in each month
 enum date { YEAR, MONTH, DAY, HOUR, MINUTE };					// Enumeration representing each parameter of a date array
 
-																// CLASSES / STRUCTS
+// CLASSES / STRUCTS
 
-																/**
-																* This class holds and handles alarm entries as a time and a label.
-																*/
+/**
+* This class holds and handles alarm entries as a time and a label.
+*/
 class Event
 {
 public:
@@ -37,6 +37,7 @@ public:
 	Event(int time[NUM_DATE_PARAMS], std::string);			// Constructor taking date array and label
 	Event(long long int, std::string);				// Constructor taking integer and label
 	Event(Event&);							// Copy constructor
+	void set(long long int, std::string);
 	std::chrono::seconds getAlarm() const;				// Getter to return alarm as seconds object
 	long long int getAlarmAsInt() const;				// Getter to return alarm as integer
 	int * getAlarmAsDate() const;					// Getter to return alarm as integer array representing a date
@@ -100,6 +101,19 @@ Event::Event(Event& event) : alarm(event.getAlarmAsInt()), label(event.getLabel(
 * Getter for the alarm.
 * @returns	chrono::seconds object representing time since epoch
 */
+
+/**
+ * Setter function.
+ * @param	integer representing seconds since epoch
+ * @param	(optional) string representing a label for the event
+ */
+void Event::set(long long int _alarm, std::string _label)
+{
+	label = _label;
+	std::chrono::seconds temp(_alarm);
+	alarm = temp;
+}
+
 std::chrono::seconds Event::getAlarm() const
 {
 	return alarm;
@@ -195,6 +209,7 @@ Event Event::operator=(const Event &rhs)
 	//return new Event(rhs.getAlarm(), rhs.getLabel());
 	this->alarm = rhs.getAlarm();
 	this->label = rhs.getLabel();
+	return *this;
 }
 
 /**
@@ -243,4 +258,3 @@ void Event::setAlarmFromDate(int time[NUM_DATE_PARAMS])
 Event::~Event() {}
 
 #endif
-#pragma once
