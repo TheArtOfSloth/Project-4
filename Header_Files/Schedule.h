@@ -9,7 +9,7 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 
 // LIBRARIES
-#include "Schedule.h"
+//#include "Schedule.h" <- Potentially causing errors. Edit this out later.
 #include<chrono>
 #include<ctime>
 #include<fstream>
@@ -85,11 +85,11 @@ Schedule::Schedule(std::string filename) : head(nullptr), filename(filename), is
 		nodeptr = nodeptr->next;
 	}
 	fin.close();
-	sortList();
+	sortList(); //John & Tarin will work on and fix this. Edit this comment out later when sortList is properly built.
 	// Delete expired alarms
 	nodeptr = head;
 	time_t current = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	while (head)
+	while (head->next != nullptr) //Changed to "head->next != null" from "while (head)"
 	{
 		if (nodeptr->event.getAlarmAsInt() < current)
 		{
@@ -172,7 +172,7 @@ Schedule::~Schedule()
 {
 	sortList();
 	saveFile();
-	while (head)
+	while (head->next != nullptr) //Changed while(head) to head->next != nullptr. 
 	{
 		Node *nodeptr = head;
 		head = head->next;
@@ -198,12 +198,15 @@ void Schedule::addAlarm()
 	{
 		bool isGood = true;
 		std::cout << "Please enter the date of the scheduled event [MM/DD/YYYY]: ";
-		std::cin >> date[MONTH];
-		if (std::cin.get() != '/')
+		std::cin >> date[MONTH]; 
+		//Check these conditional statements with Tarin. Ensure the date string is read properly.
+		//Double check with Tarin if all of these cin statements for date[MONTH] and date[DAY] and date[YEAR] are being 
+		//overwritten. So rewrite these std::cins with a single one and use C-string substr to read the input line.
+		if (std::cin.get() != '/') //Check that this reads in the whole input and not just the first character.
 		{
 			std::cout << "ERROR: Date entered incorrectly.\n";
 			isGood = false;
-			continue;
+			continue; //This may be redundant? Check to ensure this isn't causing errors.
 		}
 		else;
 		std::cin >> date[DAY];
@@ -211,7 +214,7 @@ void Schedule::addAlarm()
 		{
 			std::cout << "ERROR: Date entered incorrectly.\n";
 			isGood = false;
-			continue;
+			continue; // ?
 		}
 		else;
 		std::cin >> date[YEAR];
@@ -219,9 +222,11 @@ void Schedule::addAlarm()
 		{
 			std::cout << "ERROR: Date entered incorrectly.\n";
 			isGood = false;
-			continue;
+			continue; // ? Test to see if these can be taken out.
 		}
 		else;
+		//Change this if statement to check if it's less than the current timestamp NOT before the epoch.
+		//We shouldn't allow any events that have dates that have already transpired.
 		if (date[YEAR] < 1970) { std::cout << "ERROR: Year mus be greater than 1970.\n"; isGood = false; }
 		else;
 		if ((date[YEAR] % 4 == 0 && date[YEAR] % 100 == 0) || date[YEAR] % 400 != 0) months[1] = 29; else months[1] = 28;
@@ -231,7 +236,7 @@ void Schedule::addAlarm()
 	} while (!isGood);
 		// Enter event time
 		do
-		{
+		{       
 			std::cout << "Please enter the time of the scheduled event in military time [HH:MM]: ";
 			std::cin >> date[HOUR];
 			if (std::cin.get() != ':')
@@ -241,7 +246,7 @@ void Schedule::addAlarm()
 				continue;
 			}
 			else;
-		std::cin >> date[MINUTE];
+			std::cin >> date[MINUTE];
 			bool isGood = true;
 			if (date[HOUR] < 0 || date[HOUR] > 23)
 			{
@@ -300,6 +305,7 @@ void Schedule::addAlarm()
 void Schedule::alarmLoop()
 {
 	using std::chrono::system_clock;
+	//Check if this loop might cause any issues. John & Tarin.
 	while (!soundAlarm)
 	{
 		time_t current = system_clock::to_time_t(system_clock::now());
@@ -341,8 +347,8 @@ void Schedule::alarmLoop()
 * Function to remove the next alarm in the list (if any).
 */
 void Schedule::removeNextAlarm()
-{
-	if (!head) std::cout << "No scheduled event to remove.\n";
+{	//Changed if (!head) to if (head->next != nullptr)
+	if (head->next != nullptr) std::cout << "No scheduled event to remove.\n";
 	else
 	{
 		Node *nodeptr = head;
@@ -361,7 +367,7 @@ void Schedule::saveFile()
 	std::ofstream fout;
 	fout.open(filename); // Should be test.txt
 	Node* nodeptr = head;
-	while (nodeptr)
+	while (nodeptr != nullptr) //Change to while nodeptr != nullptr for NullPointerException validation.
 	{
 		fout << nodeptr->event.getAlarmAsInt() << "	" << nodeptr->event.getLabel() << std::endl;
 		nodeptr = nodeptr->next;
@@ -374,10 +380,10 @@ void Schedule::saveFile()
 void Schedule::sortList()
 {
 	Node *nodeptr = list;
-	while (nodeptr)
+	while (nodeptr != nullptr) //Change to while nodeptr != nullptr.
 	{
 		Node *nextptr = nodeptr->next;
-		while (nextptr)
+		while (nextptr != nullptr) //Do validation checks for nullptr just in case.
 		{   //Error
 			if (nodeptr->event.getAlarm() > nextptr->event.getAlarm())
 			{
@@ -398,7 +404,7 @@ void Schedule::sortList()
 */
 void Schedule::viewNextAlarm()
 {
-	if (head) std::cout << "Next event: " << head - event << std::endl;
+	if (head != nullptr) std::cout << "Next event: " << head -> event << std::endl; //is head - event a typo? Changed to head -> event
 	else std::cout << "No upcoming events.\n";
 }
 
