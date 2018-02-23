@@ -12,6 +12,7 @@
 #include<chrono>
 #include<iostream>
 #include<stdexcept>
+#include<string>
 
 // GLOBAL CONSTANTS / VARIABLES
 const int MAX_NUM_HOURS = 24;							// Integer to hold maximum number of hours
