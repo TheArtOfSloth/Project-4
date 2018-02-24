@@ -45,11 +45,11 @@ class Schedule
 public:
 	Schedule(std::string);			// Constructor to load file.
 	void pollingLoop();			// Loop to handle class functionality
-	~Schedule();				// Class destructor
+	~Schedule();				// Class destructor	
 protected:
-	void addAlarm();			// Function to create a new alarm
 	void alarmLoop();			// Loop to handle when an alarm is activated
 	void userLoop();
+	void addAlarm();			// Function to create a new alarm
 	void removeNextAlarm();		// Function to delete the next alarm
 	void saveFile();			// Function to save file
 	void sortList();			// Function to order the list of alarms
@@ -111,17 +111,20 @@ void Schedule::pollingLoop()
 	bool printOutput = true;
 	t1 = std::thread(&Schedule::alarmLoop, this);	// Execute background alarm loop
 	t2 = std::thread(&Schedule::userLoop, this);	// Execute background input loop
+	t1.join();
+	t2.join();
 	while (isRunning)
 	{
 		if (soundAlarm)
 		{
 			printOutput = true;	// Re-print output
-			t1.join(); // Spin lock until alarm is dealt with
+			//t1.join(); // Spin lock until alarm is dealt with
 			t1 = std::thread(&Schedule::alarmLoop, this); // Re-execute alarmLoop thread
-		} else;
+		}
+		else;
 		if (!command.empty() || command != "")
 		{
-			t2.join();
+			//t2.join();
 			printOutput = true;
 			t2 = std::thread(&Schedule::userLoop, this);
 		}
@@ -178,7 +181,7 @@ void Schedule::addAlarm()
 		std::cin >> date[YEAR];
 		if (std::cin.get() != '/')
 		{
-			std::cout << "ERROR: Date entered incorrectly.\n";
+			//std::cout << "ERROR: Date entered incorrectly.\n";
 			isGood = false;
 		}
 		else;
@@ -279,7 +282,7 @@ void Schedule::alarmLoop()
 		std::string exit = "";
 		while (std::getline(std::cin, exit))
 		{
-			std::cout << "\a";
+			std::cout << '\a';
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			if (exit.empty()) break;
 			else
@@ -296,8 +299,8 @@ void Schedule::alarmLoop()
 }
 
 /**
- * Thread function to handle user input.
- */
+* Thread function to handle user input.
+*/
 void Schedule::userLoop()
 {
 	bool printOutput = true;
@@ -314,7 +317,8 @@ void Schedule::userLoop()
 	else;
 	while (std::getline(std::cin, command))
 	{
-		if (command.empty()) break;
+		//if (command.empty()) break;
+		if (command.empty()) continue;
 		else
 		{
 			if (command == "1") viewNextAlarm();
