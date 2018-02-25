@@ -284,7 +284,8 @@ void Schedule::alarmLoop()
 		{
 			std::cout << '\a';
 			std::this_thread::sleep_for(std::chrono::seconds(1));
-			if (exit.empty()) break;
+			//if (exit.empty()) break;
+			if (exit.empty()) continue;
 			else
 			{
 				soundAlarm = false;
