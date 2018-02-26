@@ -263,10 +263,19 @@ void poller::saveFile()
 };
 
 //views next alarm
-//Taryn - Do this.
+//Tarin did this.
 void poller::viewNextAlarm()
 {
-	//output head pointer event data
+	if(head != NULL){
+		cout << "The next scheduled event is " << head->event.getLabel() << endl;
+		cout << "It is scheduled for ";
+		int* dateArray = head->event.getAlarmAsDate();
+		cout << dateArray[HOUR] << ":" << dateArray[MINUTE] << " on " << dateArray[MONTH] << "/" << dateArray[DAY] << "/" << dateArray[YEAR] << endl;
+	}
+	
+	else{
+		cout << "There are no scheduled events" << endl;
+	}
 };
 
 //runs user input
