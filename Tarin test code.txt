@@ -1,0 +1,3 @@
+viewNextAlarm(node nodePointer, Event eventLulz){
+
+}
