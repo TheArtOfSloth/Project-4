@@ -1,3 +1,10 @@
-viewNextAlarm(node nodePointer, Event eventLulz){
-
+viewNextAlarm(){
+    //Node *temp = head;
+    if(head != NULL){
+        cout << "The next scheduled event is " << head->Event.getLabel() << endl;
+        cout << "It is scheduled for " << head->Event.getAlarmAsInt() << endl;
+    }
+    else{
+        cout << "There are no scheduled events" << endl;
+    }
 }
