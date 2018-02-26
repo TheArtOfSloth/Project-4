@@ -35,7 +35,7 @@ struct Node
 };
 
 /*
-used to stare data and run threads.
+used to store data and run threads.
 */
 class poller
 {
@@ -130,19 +130,19 @@ void poller::addAlarm()
 		cin >> date[MONTH];
 			if (cin.get() != '/')
 			{
-				cout << " Error : Incorret Date!" << endl;
+				cout << " Error : Incorrect Date!" << endl;
 				isGood = false;
 			}
 		cin >> date[DAY];
 			if (cin.get() != '/')
 			{
-				cout << " Error : Incorret Date!" << endl;
+				cout << " Error : Incorrect Date!" << endl;
 				isGood = false;
 			}
 		cin >> date[YEAR];
 			if (cin.get() != '/')
 			{
-				cout << " Error : Incorret Date!" << endl;
+				cout << " Error : Incorrect Date!" << endl;
 				isGood = false;
 			}
 
