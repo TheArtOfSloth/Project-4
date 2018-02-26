@@ -207,7 +207,28 @@ void poller::addAlarm()
 				newNode->next = head;
 				head = newNode;
 				sortAlarms();
+				
+			if (!head)
+			{
+				head = newNode;
+			}
+			else if (newNode->event.getAlarmAsInt() < head->event.getAlarmAsInt)
+			{
+				newNode->next = head;
+				head = newNode;
+			}
+			else
+			{
+				Node *prevptr = head;
+				Node *nodeptr = head->next;
 
+				while (nodeptr || newNode->event.getAlarmAsInt() > nodeptr->event.getAlarmAsInt())
+				{
+					nodeptr = nodeptr->next;
+					prevptr = prevptr->next;
+				}
+				newNode->next = nodeptr;
+				prevptr->next = newNode;
 				
 			}
 		
