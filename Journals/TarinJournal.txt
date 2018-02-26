@@ -17,3 +17,16 @@ Signals and signal.h are the obvious way, but that only works in linux and we ne
 The other option is to add our code as a seperate thread to another program... that's the simplest but is up to the whims of other users...
 Hmm, what if we set up our alarm stuff as a library that can be included in other programs?
 I hate to admit it, but I'm sort of waiting around for more clarification from the professor
+
+
+Wednesday the 21st
+ 
+ I have spent about an hour messing around with Travis CI. My team wants tk keep this option open. I have managed to link my personal account on github with Travis and linked a personal trst repository, but I have no idea how to Push using just the web browser commands. Need to check with team leader, figure out who is the project repository owner
+ 
+ Friday the 23rd
+ 
+ Change of plans, we are abandoning Travis. Group roles have been rearranged, i will be helping write some test files after class
+ 
+ Monday the 26th
+ 
+ No news was good news over the weekend. The team says they're doing stuff awesomely. So they gave me a task to write a viewNextAlarm() function. So we all went up to the computer lab; as of noon the function is done and compiles perfectly
