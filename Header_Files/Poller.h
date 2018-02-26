@@ -105,7 +105,8 @@ poller::~poller()
 {
 	while (head)
 	{
-		Node *nodeptr = head;
+		Node *nodeptr = new Node;
+		nodeptr = head;
 		head = head->next;
 		delete nodeptr;
 	}
@@ -220,7 +221,8 @@ void poller::addAlarm()
 //deletes next alarm
 void poller::deleteNextAlarm()
 {
-	Node *nodeptr = head;
+	Node *nodeptr = new Node; 
+	nodeptr = head;
 	head = head->next;
 	delete nodeptr;
 };
@@ -233,6 +235,7 @@ void poller::sortAlarms()
 };
 
 //saves list to file
+//John - Do this.
 void poller::saveFile()
 {
 };
