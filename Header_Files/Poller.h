@@ -228,6 +228,7 @@ void poller::deleteNextAlarm()
 };
 
 //sorts alarm list
+//Evan - Do this.
 void poller::sortAlarms()
 {
 	//pick a sorting method
@@ -241,6 +242,7 @@ void poller::saveFile()
 };
 
 //views next alarm
+//Taryn - Do this.
 void poller::viewNextAlarm()
 {
 	//output head pointer event data
