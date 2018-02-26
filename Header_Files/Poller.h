@@ -55,7 +55,8 @@ private:
 	bool isRunning;
 	bool alarmGoingOff;
 	bool placeholder;
-	string command;
+	int command1;
+	string command2;
 	string filename;
 	Node *head;
 };
