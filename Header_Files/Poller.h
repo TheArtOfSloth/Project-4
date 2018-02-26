@@ -46,6 +46,7 @@ private:
 	void addAlarm();
 	void deleteNextAlarm();
 	void sortAlarms();
+	void saveFile();
 	void viewNextAlarm();
 	void userLoop();
 	void alarmLoop();
@@ -144,6 +145,11 @@ void poller::sortAlarms()
 {
 	//pick a sorting method
 	//use it
+};
+
+//saves list to file
+void poller::saveFile()
+{
 };
 
 //views next alarm
