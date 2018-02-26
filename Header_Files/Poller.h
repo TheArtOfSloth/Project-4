@@ -64,14 +64,40 @@ private:
 //class constructor
 poller::poller(string a)
 {
+	string labelHold;
+	long long int timeStamp;
 	isRunning = true;
 	alarmGoingOff = false;
 	placeholder = false;
 	filename = a;
-	//open file
-	//read file line-by-line into Node list
-	//close file
+	fstream dataFile;
+	dataFile.open(filename);
+	head = nullptr;
+	Node *hold = new Node;
+	hold = nullptr;
+	//   CHECK THOROUGHLY!!!!!!!!!!!!!!!!!!!!!
+	while (dataFile.good())
+	{
+		dataFile >> timeStamp >> labelHold;
+		Node *temp = new Node;
+		temp->event = Event(timeStamp, labelHold);	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if (!head)
+		{
+			head = temp;
+			head->next = hold;
+		}
+		else
+		{
+			hold = temp;
+			hold = hold->next;
+			hold = nullptr;
+		}
+	}
+	//   CHECK THOROUGHLY!!!!!!!!!!!!!!!!!!!!!
+	delete hold;
+	dataFile.close();
 };
+
 
 //class destructor
 poller::~poller()
