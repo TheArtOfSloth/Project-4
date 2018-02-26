@@ -1,9 +1,17 @@
 viewNextAlarm(){
     //Node *temp = head;
     if(head != NULL){
-        cout << "The next scheduled event is " << head->Event.getLabel() << endl;
-        cout << "It is scheduled for " << head->Event.getAlarmAsInt() << endl;
+        cout << "The next scheduled event is " << head->event.getLabel() << endl;
+        //cout << "It is scheduled for " << head->event.getAlarmAsInt() << endl;
+        
+        cout << "It is scheduled for ";
+        int* dateArray = head->event.getAlarmAsDate();
+        for(int i = 0; i < (sizeof(dateArray)/sizeof(*dateArray)) ; i++){
+            cout << dateArray[i];
+        }
+        cout << endl;
     }
+    
     else{
         cout << "There are no scheduled events" << endl;
     }
