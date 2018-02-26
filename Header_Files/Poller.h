@@ -3,6 +3,7 @@
 * @author	BERNSTEIN_JOHN
 * @author	KLAPSTEIN_DANIEL
 * @author	SMITH_EVAN
+* @author       DHILLON_NAVI
 */
 #ifndef POLLER_H
 #define POLLER_H 1
@@ -117,7 +118,7 @@ void poller::addAlarm()
 	int *date = new int[NUM_DATE_PARAMS];
 	date[YEAR] = 1970; date[MONTH] = 1; date[DAY] = 1; date[HOUR] = 0; date[MINUTE] = 0;
 	string label = "";
-
+	
 	cout << "Please enter the name of the Alarm: ";
 	getline(cin, label);
 
@@ -126,32 +127,89 @@ void poller::addAlarm()
 		bool isGood = true;
 		cout << "Please enter the date of the Alarm [MM/DD/YYYY]: ";
 		cin >> date[MONTH];
-		if (cin.get() != '/')
-		{
-			cout << " Error : Incorret Date!" << endl;
-			isGood = false;
-		}
+			if (cin.get() != '/')
+			{
+				cout << " Error : Incorret Date!" << endl;
+				isGood = false;
+			}
 		cin >> date[DAY];
-		if (cin.get() != '/')
-		{
-			cout << " Error : Incorret Date!" << endl;
-			isGood = false;
-		}
+			if (cin.get() != '/')
+			{
+				cout << " Error : Incorret Date!" << endl;
+				isGood = false;
+			}
 		cin >> date[YEAR];
-		if (cin.get() != '/')
-		{
-			cout << " Error : Incorret Date!" << endl;
-			isGood = false;
-		}
+			if (cin.get() != '/')
+			{
+				cout << " Error : Incorret Date!" << endl;
+				isGood = false;
+			}
 
-		if (date[YEAR] < 1970)
-		{
-			cout << "Error : Year must be greater than 1970. " << endl;
-			isGood = false;
-		}
+			if (date[YEAR] < 1970)
+			{
+				cout << "Error : Year must be greater than 1970. " << endl;
+				isGood = false;
+			}
 
-		if ((date[YEAR] % 4 == 0 && date[YEAR] % 100 == 0) || date[YEAR] % 400 != 0)
-			months[1] = 29; else months[1] = 28;
+			if ((date[YEAR] % 4 == 0 && date[YEAR] % 100 == 0) || date[YEAR] % 400 != 0)
+				months[1] = 29; 
+			else months[1] = 28;
+			
+			if (date[MONTH] < 1 || date[MONTH] > 12)
+			{
+				cout << "Error: Month must be between 1 and 12." << endl;
+				isGood = false;
+
+			}
+			else if (date[MONTH] < 1 || date[DAY] > months[date[MONTH] - 1])
+			{
+				cout << "Error: Day must be between 1 and 31. " << endl;
+				isGood = false;
+			}
+
+			while (isGood)
+			{
+				cout << "Please enter the time of the scheduled event in 24 hour time [HH:MM]: " << endl;
+				cin >> date[HOUR];
+				if(cin.get() != ':')
+				{
+					cout << "Error: Time entered incorrectly! " << endl;
+				}
+				cin >> date[MINUTE];
+				if(date[HOUR] < 0 || date[HOUR] > 23)
+				{
+					cout << "Error: Hour must be between 1 and 23! " << endl;
+					isGood = false;
+				}
+				if (date[MINUTE] < 0 || date[MINUTE] > 59)
+				{
+					cout << "Error: Hour must be between 1 and 59! " << endl;
+					isGood = false;
+				}
+				
+			}
+
+			Event *eventA = new Event(date, label);
+			using chrono::system_clock;
+			time_t current = system_clock::to_time_t(system_clock::now());
+
+			if (eventA->getAlarmAsInt() <= current)
+			{
+				cout << "Error: Alarm schedulded in the past. " << endl;
+				delete eventA;
+			}
+
+			else
+			{
+				Node *newNode = new Node;
+				newNode->event = *eventA;
+				newNode->next = head;
+				head = newNode;
+				sortAlarms();
+
+				
+			}
+		
 
 
 	}
