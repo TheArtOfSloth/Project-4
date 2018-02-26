@@ -76,12 +76,12 @@ poller::poller(string a)
 //class destructor
 poller::~poller()
 {
-	while(head)
-		{
-			Node *nodeptr = head;
-			head = head->next;
-			delete nodeptr;
-		}
+	while (head)
+	{
+		Node *nodeptr = head;
+		head = head->next;
+		delete nodeptr;
+	}
 };
 
 //adds alarm
@@ -91,41 +91,41 @@ void poller::addAlarm()
 	int *date = new int[NUM_DATE_PARAMS];
 	date[YEAR] = 1970; date[MONTH] = 1; date[DAY] = 1; date[HOUR] = 0; date[MINUTE] = 0;
 	string label = "";
-	
+
 	cout << "Please enter the name of the Alarm: ";
 	getline(cin, label);
 
-	do
+	while(isGood)
 	{
 		bool isGood = true;
 		cout << "Please enter the date of the Alarm [MM/DD/YYYY]: ";
 		cin >> date[MONTH];
-			if (cin.get() != '/')
-			{
-				cout << " Error : Incorret Date!" << endl;
-				isGood = false;
-			}
+		if (cin.get() != '/')
+		{
+			cout << " Error : Incorret Date!" << endl;
+			isGood = false;
+		}
 		cin >> date[DAY];
-			if (cin.get() != '/')
-			{
-				cout << " Error : Incorret Date!" << endl;
-				isGood = false;
-			}
+		if (cin.get() != '/')
+		{
+			cout << " Error : Incorret Date!" << endl;
+			isGood = false;
+		}
 		cin >> date[YEAR];
-			if (cin.get() != '/')
-			{
-				cout << " Error : Incorret Date!" << endl;
-				isGood = false;
-			}
+		if (cin.get() != '/')
+		{
+			cout << " Error : Incorret Date!" << endl;
+			isGood = false;
+		}
 
-			if (date[YEAR] < 1970)
-			{
-				cout << "Error : Year must be greater than 1970. " << endl;
-				isGood = false;
-			}
+		if (date[YEAR] < 1970)
+		{
+			cout << "Error : Year must be greater than 1970. " << endl;
+			isGood = false;
+		}
 
-			if ((date[YEAR] % 4 == 0 && date[YEAR] % 100 == 0) || date[YEAR] % 400 != 0) 
-				months[1] = 29; else months[1] = 28;
+		if ((date[YEAR] % 4 == 0 && date[YEAR] % 100 == 0) || date[YEAR] % 400 != 0)
+			months[1] = 29; else months[1] = 28;
 
 
 	}
