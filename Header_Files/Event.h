@@ -98,11 +98,6 @@ Event::Event(long long int _alarm, std::string label = "") : label(label)
 Event::Event(Event& event) : alarm(event.getAlarmAsInt()), label(event.getLabel()) {}
 
 /**
-* Getter for the alarm.
-* @returns	chrono::seconds object representing time since epoch
-*/
-
-/**
  * Setter function.
  * @param	integer representing seconds since epoch
  * @param	(optional) string representing a label for the event
@@ -113,6 +108,12 @@ void Event::set(long long int _alarm, std::string _label)
 	std::chrono::seconds temp(_alarm);
 	alarm = temp;
 }
+
+
+/**
+* Getter for the alarm.
+* @returns	chrono::seconds object representing time since epoch
+*/
 
 std::chrono::seconds Event::getAlarm() const
 {
