@@ -401,7 +401,7 @@ void Schedule::userLoop()
  */
 void Schedule::viewNextAlarm()
 {
-	if (head) std::cout << "Next event: " << head-event << std::endl;
+	if (head) std::cout << "Next event: " << head->event << std::endl;
 	else std::cout << "No upcoming events.\n";
 }
 
