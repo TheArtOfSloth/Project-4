@@ -213,7 +213,7 @@ void poller::addAlarm()
 			{
 				head = newNode;
 			}
-			else if (newNode->event.getAlarmAsInt() < head->event.getAlarmAsInt)
+			else if (newNode->event.getAlarmAsInt() < head->event.getAlarmAsInt())
 			{
 				newNode->next = head;
 				head = newNode;
