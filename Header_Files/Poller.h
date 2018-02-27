@@ -4,6 +4,7 @@
 * @author	KLAPSTEIN_DANIEL
 * @author	SMITH_EVAN
 * @author       DHILLON_NAVI
+* @author	TARIN
 */
 #ifndef POLLER_H
 #define POLLER_H 1
