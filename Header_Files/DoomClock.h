@@ -11,6 +11,7 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 
 // LIBRARIES
+#include <cstdlib>
 #include<chrono>
 #include<ctime>
 #include<fstream>
@@ -23,6 +24,8 @@
 #include<conio.h>
 #include<time.h>
 #include <iomanip>
+#include <sstream>
+#include <memory>
 
 using namespace std;
 
@@ -47,8 +50,11 @@ public:
 	void pollingLoop();
 private:
 	void addAlarm();
+	void addAlarm2(int, int, int, int, int, string);
+	void addAlarm3(Events*, int, int, int, int, int, string);
 	void deleteNextAlarm();
-	void saveFile(string, string, string, string, string, string);
+	void saveFile();
+	void save(string&, string&, string&, string&, string&, string&);
 	void viewNextAlarm();
 	void userLoop();
 	void alarmLoop();
@@ -69,9 +75,12 @@ private:
 //class constructor
 doomClock::doomClock(string a)
 {
-	string labelHold;
-	string timeStamp;
-	
+	int y;
+	int b;
+	int c;
+	int d;
+	int e;
+	string f;
 	isRunning = true;
 	alarmGoingOff = false;
 	placeholder = false;
@@ -82,11 +91,13 @@ doomClock::doomClock(string a)
 	//   CHECK THOROUGHLY!!!!!!!!!!!!!!!!!!!!!
 	while (dataFile.good())
 	{
-		Events *temp = new Events;
-		dataFile >> temp->when.tm_year >> temp->when.tm_mon >> temp->when.tm_mday >> temp->when.tm_hour >> temp->when.tm_min >> temp->alarmName;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		dataFile >> y >> b >> c >> d >> e >> f;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		//Events *temp = new Events;
+		//dataFile >> temp->when.tm_year >> temp->when.tm_mon >> temp->when.tm_mday >> temp->when.tm_hour >> temp->when.tm_min >> temp->alarmName;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if (!head)
 		{
-			head = temp;
+			addAlarm2(y, b, c, d, e, f);
 			//dataFile >> head->when.tm_year >> head->when.tm_mon >> head->when.tm_mday >> head->when.tm_hour >> head->when.tm_min >> head->alarmName;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			/*
 			head->when.tm_year = temp->when.tm_year;
@@ -101,7 +112,8 @@ doomClock::doomClock(string a)
 		}
 		else
 		{
-			hold = temp;
+			addAlarm3(hold, y, b, c, d, e, f);
+			//hold = temp;
 			//dataFile >> hold->when.tm_year >> hold->when.tm_mon >> hold->when.tm_mday >> hold->when.tm_hour >> hold->when.tm_min >> hold->alarmName;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			/*
 			hold->when.tm_year = temp->when.tm_year;
@@ -118,7 +130,7 @@ doomClock::doomClock(string a)
 	//   CHECK THOROUGHLY!!!!!!!!!!!!!!!!!!!!!
 	delete hold;
 	dataFile.close();
-	sortList();
+	//sortList();---------------------------------------------------------------------------------------------------
 };
 
 //class destructor
@@ -141,17 +153,44 @@ void doomClock::addAlarm()
 	cin >> temp->alarmName;
 	cout << "please enter the Month of the alarm: ";
 	cin >> temp->when.tm_mon;
+	temp->when.tm_mon -= 1;
 	cout << "please enter the day of the alarm: ";
 	cin >> temp->when.tm_mday;
 	cout << "please enter the year of the alarm: ";
 	cin >> temp->when.tm_year;
+	temp->when.tm_year -= 1900;
 	cout << "please enter the hour of the alarm, from 0-23: ";
 	cin >> temp->when.tm_hour;
 	cout << "please enter the minute of the alarm, from 0-59: ";
 	cin >> temp->when.tm_min;
 	temp->next = head;
 	head = temp;
-	sortList();
+	//sortList();-----------------------------------------------------------------------------------------
+};
+
+void doomClock::addAlarm2(int a, int b, int c, int d, int e, string f)
+{
+	Events *temp = new Events;
+	temp->alarmName = f;
+	temp->when.tm_mon = b;
+	temp->when.tm_mday = c;
+	temp->when.tm_year = a;
+	temp->when.tm_hour = d;
+	temp->when.tm_min = e;
+	temp->next = head;
+	head = temp;
+};
+
+void doomClock::addAlarm3(Events *z, int a, int b, int c, int d, int e, string f)
+{
+	z->alarmName = f;
+	z->when.tm_mon = b;
+	z->when.tm_mday = c;
+	z->when.tm_year = a;
+	z->when.tm_hour = d;
+	z->when.tm_min = e;
+	z->next = head;
+	head = z;
 };
 
 //deletes next alarm
@@ -165,15 +204,34 @@ void doomClock::deleteNextAlarm()
 
 //saves list to file
 //John - Do this.
-void doomClock::saveFile(std::string yr,
-	std::string mon,
-	std::string day,
-	std::string hr,
-	std::string min,
-	std::string msg
-)
+void doomClock::saveFile()
 {
-	sortList();
+	Events *viewer = new Events;
+	viewer = head;
+	string sa;
+	string sb;
+	string sc;
+	string sd;
+	string se;
+	while (viewer != NULL)
+	{
+		sa = (viewer->when.tm_year);
+		sb = (viewer->when.tm_mon);
+		sc = (viewer->when.tm_mday);
+		sd = (viewer->when.tm_hour);
+		se = (viewer->when.tm_min);
+		save(sa, sb, sc, sd, se, viewer->alarmName);
+		viewer = viewer->next;
+	}
+}
+
+void doomClock::save(std::string& yr,
+	std::string& mon,
+	std::string& day,
+	std::string& hr,
+	std::string& min,
+	std::string& msg
+) {
 	std::fstream file;
 	file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
 	if (!file.is_open()) {
@@ -239,6 +297,7 @@ void doomClock::userLoop()
 			case 4:
 			{
 				isRunning = false;
+				
 				break;
 			};
 			case 5:
@@ -266,7 +325,7 @@ void doomClock::alarmLoop()
 	{
 		tt = system_clock::to_time_t(system_clock::now());
 		ptm = localtime(&tt);    //Syntax error
-		if (placeholder || mktime(&(head->when)) <= tt)
+		if (placeholder /*|| (head && (mktime((&head->when)) <= tt))*/)
 		{
 			placeholder = false;
 			alarmGoingOff = true;
