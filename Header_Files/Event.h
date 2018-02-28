@@ -1,7 +1,7 @@
 /**
-* File holding Event class, methods, and necessary values.
-* @author	SMITH_EVAN
-*/
+ * File holding Event class, methods, and necessary values.
+ * @author	SMITH_EVAN
+ */
 #ifndef EVENT_H
 #define EVENT_H 1
 #define _CRT_SECURE_NO_WARNINGS 1
@@ -15,36 +15,37 @@
 #include<string>
 
 // GLOBAL CONSTANTS / VARIABLES
-const int MAX_NUM_HOURS = 24;							// Integer to hold maximum number of hours
-const int MAX_NUM_MINUTES = 60;							// Integer to hold maximum number of minutes
-const int MAX_NUM_MONTHS = 12;							// Integer to hold maximum number of months
-const int MIN_YEAR = 1970;							// Integer to hold the minimum year allowed
-const int NUM_DATE_PARAMS = 5;							// Integer to hold constant for date array
-const int PST_ADJUST = 8 * 60 * 60;						// Integer to hold time adjustment for epoch
+const int MAX_NUM_HOURS = 24;														// Integer to hold maximum number of hours
+const int MAX_NUM_MINUTES = 60;														// Integer to hold maximum number of minutes
+const int MAX_NUM_MONTHS = 12;														// Integer to hold maximum number of months
+const int MIN_YEAR = 1970;															// Integer to hold the minimum year allowed
+const int NUM_DATE_PARAMS = 5;														// Integer to hold constant for date array
+const int PST_ADJUST = 8 * 60 * 60;													// Integer to hold time adjustment for epoch
 int months[MAX_NUM_MONTHS] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	// Integer array representing the number of days in each month
-enum date { YEAR, MONTH, DAY, HOUR, MINUTE };					// Enumeration representing each parameter of a date array
+enum date { YEAR, MONTH, DAY, HOUR, MINUTE };										// Enumeration representing each parameter of a date array
 
 // CLASSES / STRUCTS
 
 /**
-* This class holds and handles alarm entries as a time and a label.
-*/
+ * This class holds and handles alarm entries as a time and a label.
+ */
 class Event
 {
 public:
-	Event();																// Default constructor
-	Event(std::chrono::seconds, std::string);			// Constructor taking seconds object and label
-	Event(int time[NUM_DATE_PARAMS], std::string);			// Constructor taking date array and label
-	Event(long long int, std::string);				// Constructor taking integer and label
-	Event(Event&);							// Copy constructor
-	void set(long long int, std::string);
-	std::chrono::seconds getAlarm() const;				// Getter to return alarm as seconds object
-	long long int getAlarmAsInt() const;				// Getter to return alarm as integer
-	int * getAlarmAsDate() const;					// Getter to return alarm as integer array representing a date
-	std::string getLabel() const;					// Getter to return label
-	Event operator=(const Event &e);				// Overloaded '=' operator
-	friend std::ostream &operator<<(std::ostream &os, Event const &e); // Overloaded '<<' operator
-	~Event();																// Class destructor
+	Event();															// Default constructor
+	Event(std::chrono::seconds, std::string);							// Constructor taking seconds object and label
+	Event(int time[NUM_DATE_PARAMS], std::string);						// Constructor taking date array and label
+	Event(long long int, std::string);									// Constructor taking integer and label
+	void setAlarm(std::chrono::seconds);								// Alarm setter function (from chrono object)
+	void setAlarm(int time[NUM_DATE_PARAMS])							// Alarm setter function (from date array)
+	void setAlarm(long long int);										// Alarm setter function (from integer)
+	void setLabel(std::string);											// Label setter function
+	std::chrono::seconds getAlarm() const;								// Getter to return alarm as seconds object
+	long long int getAlarmAsInt() const;								// Getter to return alarm as integer
+	int * getAlarmAsDate() const;										// Getter to return alarm as integer array representing a date
+	std::string getLabel() const;										// Getter to return label
+	friend std::ostream &operator<<(std::ostream &os, Event const &e);	// Overloaded '<<' operator
+	~Event();															// Class destructor
 private:
 	void setAlarmFromDate(int time[NUM_DATE_PARAMS]);
 	std::chrono::seconds alarm;
@@ -54,9 +55,9 @@ private:
 // FUNCTIONS <Event>
 
 /**
-* Default constructor to initialize new Event with a blank label and an alarm
-* that starts on January 1, 1970.
-*/
+ * Default constructor to initialize new Event with a blank label and an alarm
+ * that starts on January 1, 1970.
+ */
 Event::Event() : label("")
 {
 	std::chrono::seconds _alarm(PST_ADJUST);
@@ -64,27 +65,27 @@ Event::Event() : label("")
 }
 
 /**
-* Constructor to initialize new Event.
-* @param	chrono::seconds object representing time since epoch
-* @param	(optional) string representing a label for the event
-*/
+ * Constructor to initialize new Event.
+ * @param	chrono::seconds object representing time since epoch
+ * @param	(optional) string representing a label for the event
+ */
 Event::Event(std::chrono::seconds alarm, std::string label = "") : alarm(alarm), label(label) {}
 
 /**
-* Constructor to initialize a new Event.
-* @param	integer array of size 5, representing a date and time
-* @param	(optional) string representing a label for the Event
-*/
+ * Constructor to initialize a new Event.
+ * @param	integer array of size 5, representing a date and time
+ * @param	(optional) string representing a label for the Event
+ */
 Event::Event(int _alarm[NUM_DATE_PARAMS], std::string label = "") : label(label)
 {
 	setAlarmFromDate(_alarm);
 }
 
 /**
-* Constructor to initialize new Event.
-* @param	long long integer representing seconds since epoch (time adjust assumed)
-* @param	(optional) string representing a label for the Event
-*/
+ * Constructor to initialize new Event.
+ * @param	long long integer representing seconds since epoch (time adjust assumed)
+ * @param	(optional) string representing a label for the Event
+ */
 Event::Event(long long int _alarm, std::string label = "") : label(label)
 {
 	std::chrono::seconds temp(_alarm);
@@ -92,46 +93,64 @@ Event::Event(long long int _alarm, std::string label = "") : label(label)
 }
 
 /**
-* Copy constructor to initialize new Event.
-* @param	Event object to be copied
-*/
-Event::Event(Event& event) : alarm(event.getAlarmAsInt()), label(event.getLabel()) {}
-
-/**
-* Getter for the alarm.
-* @returns	chrono::seconds object representing time since epoch
-*/
-
-/**
- * Setter function.
- * @param	integer representing seconds since epoch
- * @param	(optional) string representing a label for the event
+ * Alarm setter function.
+ * @param	chrono::seconds object representing time since epoch
  */
-void Event::set(long long int _alarm, std::string _label)
+void Event::setAlarm(std::chrono::seconds _alarm)
 {
-	label = _label;
+	alarm = _alarm;
+}
+
+/**
+ * Alarm setter function.
+ * @param	integer array of size 5, representing a date and time
+ */
+void Event::setAlarm(int _alarm[NUM_DATE_PARAMS])
+{
+	setAlarmFromDate(_alarm);
+}
+
+/**
+ * Alarm setter function.
+ * @param	long long integer representing seconds since epoch (time adjust assumed)
+ */
+void Event::setAlarm(long long int _alarm)
+{
 	std::chrono::seconds temp(_alarm);
 	alarm = temp;
 }
 
+/**
+ * Label setter function.
+ * @param	(optional) string representing a label for the Event
+ */
+void Event::setLabel(std::string _label = "")
+{
+	label = _label;
+}
+
+/**
+ * Getter for the alarm.
+ * @returns	chrono::seconds object representing time since epoch
+ */
 std::chrono::seconds Event::getAlarm() const
 {
 	return alarm;
 }
 
 /**
-* Getter to return the alarm as a primitive.
-* @returns long long int representing seconds since epoch
-*/
+ * Getter to return the alarm as a primitive.
+ * @returns long long int representing seconds since epoch
+ */
 long long int Event::getAlarmAsInt() const
 {
 	return alarm.count();
 }
 
 /**
-* Function that computes the date from the number of seconds since the epoch.
-* @returns	integer array of size 5 representing a date and time
-*/
+ * Function that computes the date from the number of seconds since the epoch.
+ * @returns	integer array of size 5 representing a date and time
+ */
 int * Event::getAlarmAsDate() const
 {
 	int *time = new int[NUM_DATE_PARAMS];
@@ -191,30 +210,17 @@ int * Event::getAlarmAsDate() const
 }
 
 /**
-* Getter for the label.
-* @returns label as a string
-*/
+ * Getter for the label.
+ * @returns label as a string
+ */
 std::string Event::getLabel() const
 {
 	return label;
 }
 
 /**
-* Overloaded '=' operator to set an Event's parameters to equal another's member values.
-*/
-Event Event::operator=(const Event &rhs)
-{
-	//Event *lhs = new Event(&rhs);
-	//Event *lhs = new Event(rhs.getAlarm(), rhs.getLabel());
-	//return new Event(rhs.getAlarm(), rhs.getLabel());
-	this->alarm = rhs.getAlarm();
-	this->label = rhs.getLabel();
-	return *this;
-}
-
-/**
-* Overloaded '<<' operator to output an event in a single line.
-*/
+ * Overloaded '<<' operator to output an event in a single line.
+ */
 std::ostream &operator<<(std::ostream &os, Event const &e)
 {
 	int *time = e.getAlarmAsDate();
@@ -227,9 +233,14 @@ std::ostream &operator<<(std::ostream &os, Event const &e)
 }
 
 /**
-* Private function to convert a date integer into the amount of seconds since the epoch and
-* store the value in the alarm member function.
-*/
+ * Class destructor.
+ */
+Event::~Event() {}
+
+/**
+ * Private function to convert a date integer into the amount of seconds since the epoch and
+ * store the value in the alarm member function.
+ */
 void Event::setAlarmFromDate(int time[NUM_DATE_PARAMS])
 {
 	if (time[YEAR] < 1970) throw std::invalid_argument("ERROR: Date exists before epoch."); else;
@@ -251,10 +262,5 @@ void Event::setAlarmFromDate(int time[NUM_DATE_PARAMS])
 	std::chrono::seconds t(seconds);
 	alarm = t;
 }
-
-/**
-* Class destructor.
-*/
-Event::~Event() {}
 
 #endif
