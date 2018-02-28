@@ -1,23 +1,23 @@
-#define _CRT_SECURE_NO_WARNINGS 1
-
+#include "DoomClock.h"
 #include<chrono>
-#include<conio.h>
 #include<ctime>
 #include<fstream>
-#include<iostream>
 #include<iomanip>
-#include<time.h>
-#include<thread>
-#include <string>
+#include<iostream>
+#include<limits>
 #include<stdexcept>
-#include"Event.h"
-#include"Schedule.h"
+#include<string>
+#include<thread>
+#include<conio.h>
+#include<time.h>
+#include<stdexcept>
 using namespace std;
 
 int main()
 {
-	string c = "timestamps.txt";
-	Schedule b(c);
-	b.threadTheNeedle();
+	string a;
+	a = "timestamps.txt";
+	doomClock b(a);
+	b.pollingLoop();
 	return 0;
 }
