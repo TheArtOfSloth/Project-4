@@ -240,43 +240,6 @@ void Schedule::alarmLoop()
 		}
 		std::thread::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-	/*
-	using std::chrono::system_clock;
-	while(!soundAlarm)
-	{
-		time_t current = system_clock::to_time_t(system_clock::now());
-		if (!head) soundAlarm = false;
-		else if (current >= head->event.getAlarmAsInt()) soundAlarm = true;
-		else soundAlarm = false;
-		this_thread::sleep_for(chrono::seconds(1));
-	}
-	while (soundAlarm)
-	{
-		bool printAlarm = true;
-		if (printAlarm)
-		{
-			std::cout << "Alert: " << list->event << std::endl;
-			std::cout << "Press any key to dismiss...\n";
-			printAlarm = false;
-		} else;
-		std::string exit = "";
-		while (std::getline(cin, exit))
-		{
-			std::cout << "\a";
-			this_thread::sleep_for(chrono::seconds(1));
-			if (exit.empty()) break;
-			else
-			{
-				soundAlarm = false;
-				Node *nodeptr = head;
-				head = head->next;
-				delete nodeptr;
-				std::cin.ignore();
-				saveFile();
-			}
-		}
-	}
-	*/
 }
 
 /**
@@ -316,27 +279,6 @@ void Schedule::saveFile()
 void Schedule::sortList()
 {
 	head = mergeSort(head);
-	/*
-	Node *nodeptr = list;
-	while (nodeptr)
-	{
-		Node *nextptr = nodeptr->next;
-		while (nextptr)
-		{   //Error
-			if (nodeptr->event->getAlarm() > nextptr->event->getAlarm())
-			{
-				Event *temp = new Event();
-				temp = nodeptr->event;
-				nodeptr->event = nextptr->event;
-				nextptr->event = temp;
-				delete temp;
-			}
-			else;
-			nextptr = nextptr->next;
-		}
-		nodeptr = nodeptr->next;
-	}
-	*/
 }
 
 /**
@@ -405,7 +347,7 @@ void Schedule::viewNextAlarm()
 
 /**
  * Function called within sortList() to recursively sort linked list.
- * @param	(optional) head pointer of list / sub-list
+ * @param	head pointer of list / sub-list
  * @returns	pointer to the head of a sorted list or single element
  */
 Node * Schedule::mergeSort(Node *list)
@@ -436,7 +378,6 @@ Node * Schedule::merge(Node *sublist_1, Node *sublist_2)
 	Node *list = nullptr;
 	if (sublist_1->event.getAlarmAsInt() < sublist_2->event.getAlarmAsInt()) list = sublist_1;
 	else list = sublist_2;
-	list->next = nullptr;
 	Node *nodeptr = list;
 	do
 	{
@@ -461,8 +402,8 @@ Node * Schedule::merge(Node *sublist_1, Node *sublist_2)
 			sublist_2 = sublist_2->next;
 		}
 		nodeptr = nodeptr->next;
-		nodeptr->next = nullptr;
 	} while (sublist_1 || sublist_2);
+	nodeptr->next = nullptr;
 	return list;
 }
 
