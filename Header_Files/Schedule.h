@@ -204,7 +204,8 @@ void Schedule::addAlarm()
 	{
 		// Add event to list
 		Node *newNode = new Node;
-		newNode->event = event;
+		newNode->event.setAlarm(date);
+		newNode->event.setLabel(label);
 		newNode->next = nullptr;
 		if (!head) head = newNode;
 		else
