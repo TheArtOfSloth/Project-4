@@ -44,19 +44,19 @@ struct Node
 class Schedule
 {
 public:
-	Schedule(std::string);		// Constructor to load file.
+	Schedule(std::string);			// Constructor to load file.
 	void pollingLoop();			// Loop to handle class functionality
 	~Schedule();				// Class destructor
 private:
 	void addAlarm();			// Function to create a new alarm
 	void alarmLoop();			// Loop to handle when an alarm is activated
-	void removeNextAlarm();		// Function to delete the next alarm
+	void removeNextAlarm();			// Function to delete the next alarm
 	void saveFile();			// Function to save file
 	void sortList();			// Function to order the list of alarms
 	void userLoop();			// Loop to handle user input
-	void viewNextAlarm();		// Function to output next alarm
-	Node * mergeSort(Node*)		// Function to recursively sort linked list (do not manually execute)
-	Node * merge(Node*, Node*);	// Function to merge two sorted linked lists (do not manually execute)
+	void viewNextAlarm();			// Function to output next alarm
+	Node * mergeSort(Node*)			// Function to recursively sort linked list (do not manually execute)
+	Node * merge(Node*, Node*);		// Function to merge two sorted linked lists (do not manually execute)
 	bool isRunning, soundAlarm, plceholder;
 	Node *head;
 	std::string filename,;
