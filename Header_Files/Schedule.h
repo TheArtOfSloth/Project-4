@@ -14,9 +14,7 @@
 #include<chrono>
 #include<ctime>
 #include<fstream>
-#include<iomanip>
 #include<iostream>
-#include<limits>
 #include<stdexcept>
 #include<string>
 #include<thread>
@@ -317,7 +315,7 @@ void Schedule::saveFile()
  */
 void Schedule::sortList()
 {
-	head = mergeSort();
+	head = mergeSort(head);
 	/*
 	Node *nodeptr = list;
 	while (nodeptr)
@@ -412,21 +410,19 @@ void Schedule::viewNextAlarm()
  */
 Node * Schedule::mergeSort(Node *list)
 {
-	if (!list || !list->next) return list; // Base case (list size is 1)
-	else
+	if (!list || !list->next) return list; else; // Base case (list size is 1)
+	// Divide list into two sublists
+	Node *nodeptr = list;
+	Node *sublist_1 = nodeptr;
+	Node *sublist_2 = (nodeptr = nodeptr->next);
+	while (nodeptr)
 	{
-		// Divide list into two sublists
-		Node *nodeptr = list;
-		Node *sublist_1 = nodeptr;
-		Node *sublist_2 = (nodeptr = nodeptr->next);
-		while (nodeptr)
-		{
-			if (nodeptr) sublist_1 = (nodeptr = nodeptr->next); else;
-			if (nodeptr) sublist_2 = (nodeptr = nodeptr->next); else;
-		}
+		if (nodeptr) sublist_1 = (nodeptr = nodeptr->next); else;
+		if (nodeptr) sublist_2 = (nodeptr = nodeptr->next); else;
 	}
 	// Return pointer to head of sorted linked list
-	return merge(mergeSort(sublist_1), mergeSort(sublist_2));
+	list = merge(mergeSort(sublist_1), mergeSort(sublist_2));
+	return list;
 }
 
 /**
