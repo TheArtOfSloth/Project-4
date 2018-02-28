@@ -440,31 +440,33 @@ Node * Schedule::merge(Node *sublist_1, Node *sublist_2)
 	Node *list = nullptr;
 	if (sublist_1->event.getAlarmAsInt() < sublist_2->event.getAlarmAsInt()) list = sublist_1;
 	else list = sublist_2;
+	list->next = nullptr;
 	Node *nodeptr = list;
-	while (sublist_1 || sublist_2)
+	do
 	{
 		if (!sublist_1 && sublist_2)
 		{
-			nodeptr = sublist_2;
+			nodeptr->next = sublist_2;
 			sublist_2 = sublist_2->next;
 		}
 		else if (sublist_1 && !sublist_2)
 		{
-			nodeptr = sublist_1;
+			nodeptr->next = sublist_1;
 			sublist_1 = sublist_1->next;
 		}
 		else if (sublist_1->event.getAlarmAsInt() < sublist_2->event.getAlarmAsInt())
 		{
-			nodeptr = sublist_1;
+			nodeptr->next = sublist_1;
 			sublist_1 = sublist_1->next;
 		}
 		else
 		{
-			nodeptr = sublist_2;
+			nodeptr->next = sublist_2;
 			sublist_2 = sublist_2->next;
 		}
 		nodeptr = nodeptr->next;
-	}
+		nodeptr->next = nullptr;
+	} while (sublist_1 || sublist_2);
 	return list;
 }
 
