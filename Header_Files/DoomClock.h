@@ -3,7 +3,7 @@
 * @author	BERNSTEIN_JOHN
 * @author	KLAPSTEIN_DANIEL
 * @author	SMITH_EVAN
-* @author       DHILLON_NAVI
+* @author   DHILLON_NAVI
 * @author	TARIN
 */
 #ifndef DOOMCLOCK_H
@@ -122,19 +122,19 @@ void doomClock::processFile(Events *a, Events *b, string d)
 void doomClock::addAlarm()
 {
 	Events *temp = new Events;
-	cout << "Please enter the name of the Alarm: ";
+	cout << "Please enter the name of the alarm: ";
 	cin >> temp->alarmName;
-	cout << "please enter the Month of the alarm: ";
+	cout << "Please enter the month of the alarm: ";
 	cin >> temp->when.tm_mon;
 	temp->when.tm_mon -= 1;
-	cout << "please enter the day of the alarm: ";
+	cout << "Please enter the day of the alarm: ";
 	cin >> temp->when.tm_mday;
-	cout << "please enter the year of the alarm: ";
+	cout << "Please enter the year of the alarm: ";
 	cin >> temp->when.tm_year;
 	temp->when.tm_year -= 1900;
-	cout << "please enter the hour of the alarm, from 0-23: ";
+	cout << "Please enter the hour of the alarm, from 0-23: ";
 	cin >> temp->when.tm_hour;
-	cout << "please enter the minute of the alarm, from 0-59: ";
+	cout << "Please enter the minute of the alarm, from 0-59: ";
 	cin >> temp->when.tm_min;
 	temp->when.tm_sec = 0;
 	temp->next = head;
@@ -172,6 +172,7 @@ void doomClock::deleteNextAlarm()
 {
 	Events *nodeptr = new Events;
 	nodeptr = head;
+
 	head = head->next;
 	delete nodeptr;
 };
@@ -209,7 +210,7 @@ void doomClock::save(std::string& yr,
 	std::fstream file;
 	file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
 	if (!file.is_open()) {
-		std::cout << "Error opening file\n";
+		std::cout << "Error opening file.\n";
 	}
 	else {
 		file << yr << " " << mon << " " << day << " " << hr << " " << min << msg << "\n";
@@ -228,7 +229,7 @@ void doomClock::viewNextAlarm()
 	}
 
 	else {
-		cout << "There are no scheduled events" << endl;
+		cout << "There are no scheduled events." << endl;
 	}
 };
 
@@ -239,16 +240,19 @@ void doomClock::userLoop()
 	{
 		if (alarmGoingOff)
 		{
-			cout << "ALARM TIME!!! type any entry to exit" << endl;
+			cout << "ALARM TIME!!! Type any entry to exit." << endl;
 			cin >> command1;
 			alarmGoingOff = false;
 			deleteNextAlarm();
 		}
 		else
 		{
-			cout << "1 - view next alarm" << endl << "2 - add new alarm" << endl;
-			cout << "3 - delete next alarm" << endl << "4 - exit" << endl;
-			cout << "5 - test dummy alarm" << endl;
+			
+			cout <<  "1 - View Next Alarm" << endl;
+			cout <<  "2 - Add New Alarm" << endl;
+			cout <<  "3 - Delete Next Alarm" << endl;
+			cout <<  "4 - Exit" << endl;
+			cout <<  "5 - Test Dummy Alarm" << endl;
 			cin >> command1;
 			cout << endl;
 			switch (command1)
