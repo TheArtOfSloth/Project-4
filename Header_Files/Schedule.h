@@ -101,18 +101,18 @@ Schedule::Schedule(std::string filename) : head(nullptr), filename(filename), is
 	fin.close();
 	sortList();
 	// Delete expired alarms
-	nodeptr = head;
-	time_t current = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	/*time_t current = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	Node *temp = head;
 	while (head)
 	{
-		if (nodeptr->e.getAlarmAsInt() < current)
+		if (temp->e.getAlarmAsInt() < (long long) current)
 		{
 			head = head->next;
-			delete nodeptr;
-			nodeptr = head;
+			delete temp;
+			temp = head;
 		}
-		else break;
-	}
+		else;
+	}*/
 	saveFile();
 }
 
@@ -285,15 +285,12 @@ void Schedule::removeNextAlarm()
 void Schedule::saveFile()
 {
 	std::ofstream fout;
-	fout.open(filename); // Should be test.txt
+	fout.open(filename, std::ofstream::out | std::ofstream::trunc); // Should be test.txt
 	Node* nodeptr = head;
-	long long int alarm;
-	std::string label;
 	while (nodeptr)
 	{
-		alarm = nodeptr->e.getAlarmAsInt();
-		label = nodeptr->e.getLabel();
-		fout << alarm << "	" << label << std::endl;
+		if (!nodeptr->next) fout << nodeptr->e.getAlarmAsInt() << "	" << nodeptr->e.getLabel();
+		else fout << nodeptr->e.getAlarmAsInt() << "	" << nodeptr->e.getLabel() << std::endl;
 		nodeptr = nodeptr->next;
 	}
 	fout.close();
@@ -304,7 +301,8 @@ void Schedule::saveFile()
 */
 void Schedule::sortList()
 {
-	head = mergeSort(head);
+	Node *list = mergeSort(head);
+	head = list;
 }
 
 /**
@@ -380,29 +378,53 @@ Node * Schedule::mergeSort(Node *list)
 {
 	if (!list || !list->next) return list; else; // Base case (list size is 1)
 	// Divide list into two sublists
-	Node *nodeptr = list;
-	Node *sublist_1 = nodeptr;
-	Node *sublist_2 = nodeptr->next;
-	Node *subHead_1 = sublist_1;
-	Node *subHead_2 = sublist_2;
-	nodeptr = nodeptr->next->next;
+	Node *subhead_1, *subhead_2, *sublist_1, *sublist_2, *nodeptr;
+	nodeptr = list;
+	// Initialize sublist_1
+	subhead_1 = sublist_1 = new Node;
+	sublist_1->e.setAlarm(nodeptr->e.getAlarmAsInt());
+	sublist_1->e.setLabel(nodeptr->e.getLabel());
+	sublist_1->next = nullptr;
+	nodeptr = nodeptr->next;
+	delete list;
+	list = nodeptr;
+	// Initialize sublist_2
+	subhead_2 = sublist_2 = new Node;
+	sublist_2->e.setAlarm(nodeptr->e.getAlarmAsInt());
+	sublist_2->e.setLabel(nodeptr->e.getLabel());
+	sublist_2->next = nullptr;
+	nodeptr = nodeptr->next;
+	delete list;
+	list = nodeptr;
+	// Iterate and modify sublists
 	while (nodeptr)
 	{
 		if (nodeptr)
 		{
-			sublist_1->next = nodeptr;
+			sublist_1->next = new Node;
 			sublist_1 = sublist_1->next;
+			sublist_1->e.setAlarm(nodeptr->e.getAlarm());
+			sublist_1->e.setLabel(nodeptr->e.getLabel());
+			sublist_1->next = nullptr;
+			nodeptr = nodeptr->next;
+			delete list;
+			list = nodeptr;
 		} else;
-		if (nodeptr->next)
+		if (nodeptr)
 		{
-			sublist_2->next = nodeptr->next;
+			sublist_2->next = new Node;
 			sublist_2 = sublist_2->next;
+			sublist_2->e.setAlarm(nodeptr->e.getAlarm());
+			sublist_2->e.setLabel(nodeptr->e.getLabel());
+			sublist_2->next = nullptr;
+			nodeptr = nodeptr->next;
+			delete list;
+			list = nodeptr;
 		} else;
-		nodeptr = nodeptr->next->next;
 	}
-	sublist_1->next = nullptr;
 	// Return pointer to head of sorted linked list
-	return merge(mergeSort(subHead_1), mergeSort(subHead_2));
+	list = merge(mergeSort(subhead_1), mergeSort(subhead_2));
+	return list;
 }
 
 /**
@@ -440,7 +462,7 @@ Node * Schedule::merge(Node *sublist_1, Node *sublist_2)
 			sublist_2 = sublist_2->next;
 		}
 		nodeptr = nodeptr->next;
-	} while (sublist_1 || sublist_2);
+	} while (!sublist_1 && !sublist_2);
 	return list;
 }
 
