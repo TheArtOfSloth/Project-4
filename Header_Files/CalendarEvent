@@ -1,0 +1,171 @@
+#pragma once
+#ifndef CALENDAR_EVENT_H
+#define CALENDAR_EVENT 1
+#include <algorithm>
+#include <chrono>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+
+class CalendarEvent {
+public:
+	CalendarEvent(std::string event) {
+		auto current = std::chrono::system_clock::now();
+		count = 0;
+		open(filename);
+	}
+	~CalendarEvent() { /*Possibly implement this later OR use smart pointers*/ }
+private:
+	//Members
+	//TODO: Change filepath to current folder (i.e. ./). REMOVE TESTING FILEPATH.
+	std::string filename = "C:\\Users\\John\\Desktop\\schedule.txt";
+	std::vector<std::string> events;
+	//Keeps track of the amount of events in calendar.
+	int count;
+	//Methods
+	void sort(std::vector<std::string>& events) {
+		std::sort(events.begin(), events.end());
+	}
+
+	void alert(std::string msg) {
+		std::cout << "\a" << msg << "\nPress enter to terminate alarm";
+	}
+
+	void open(std::string filename) {
+		std::fstream file;
+		file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+		if (file.is_open()) {
+			menu();
+			if (std::chrono::system_clock::now == events.front) {
+				//Need to access the message component NOT the timestamp.
+				alert(events.front());
+			}
+			polling();
+		}
+		sort(events);
+		file.close();
+	}
+	void polling() {
+		std::string exit = "";
+		std::string userInput = "";
+		while (exit != "4") {
+			menu();
+			std::cin >> userInput;
+			exit = input(userInput);
+			std::cout << exit;
+		}
+	}
+	void menu() {
+		std::cout << "1: View events\n"
+			<< "2: Add new alarm\n"
+			<< "3: Delete next alarm\n"
+			<< "4: Exit program\n"
+			<< "5: Test alarm"
+			<< std::endl;
+	}
+	std::string input(std::string& userInput) {
+		return userInput == "1" ? view() :
+			userInput == "2" ? schedule() :
+			userInput == "3" ? remove() :
+			userInput == "4" ? exit() :
+			userInput == "5" ? test() :
+			"Invalid selection. Please try again.\n";
+	}
+	std::string view() {
+		std::fstream file;
+		std::string line;
+
+		file.open(filename, std::fstream::in);
+		if (!file.is_open()) {
+			std::cout << "Error: file failed to open.\n";
+		}
+		else {
+			std::cout << "DATE & TIME  | MESSAGE\n+------------------+\n";
+			while (!file.eof()) {
+				std::getline(file, line, '_');
+				events.push_back(line);
+				sort(events);
+				std::cout << line;
+			}
+
+			return line;
+		}
+	}
+	std::string remove() {
+		return "Remove this later\n";
+	}
+	std::string exit() {
+		return "4";
+	}
+	std::string test() {
+		return "TEST\n";
+	}
+	std::string schedule() {
+		//User input here for event
+		std::string yr, mon, day, hr, min, msg;
+		std::cout << "Please enter date (YYYY/MM/DD): ";
+		std::getline(std::cin, yr, '/');
+
+		std::getline(std::cin, mon, '/');
+		std::getline(std::cin, day, '\n');
+
+		std::cout << "Please enter time for event on " << yr << "/" << mon << "/" << day << " (HH:MM): ";
+		std::getline(std::cin, hr, ':');
+		std::getline(std::cin, min);
+
+		std::cout << "Please enter message for event: ";
+		std::getline(std::cin, msg);
+
+		save(yr, mon, day, hr, min, msg);
+
+		return "Message successfully saved! Your message is: " + msg + "\n" +
+			"Scheduled for " + yr + "/" + mon + "/" + day + " at " + hr + ":" + min;
+	}
+	void save(std::string& yr, std::string& mon,
+		std::string& day, std::string& hr,
+		std::string& min, std::string& msg
+	) {
+		//Convert strings to ints.
+		std::stringstream _yr(yr);
+		std::stringstream _mon(mon);
+		std::stringstream _day(day);
+		std::stringstream _hr(hr);
+		std::stringstream _min(min);
+
+		int i_yr, i_mon, i_day, i_hr, i_min;
+		_yr >> i_yr;
+		_mon >> i_mon;
+		_day >> i_day;
+		_hr >> i_hr;
+		_min >> i_min;
+
+		//Change the values since the epoch of Jan 1st 1970 00:00:00 UTC
+		i_yr -= 1970;
+		i_mon -= 1;
+		i_day -= 1;
+
+		std::fstream file;
+		file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+		if (!file.is_open()) {
+			std::cout << "Error opening file\n";
+		}
+		else {
+			file << yr << " " << mon << " " << day << " " << hr << " " << min << " " << msg << "\n" << "_";
+		}
+
+		sort(events);
+
+		file.close();
+	}
+
+	/*void count(int c) {
+	count = c;
+	}*/
+
+	int getCount() const {
+		return count;
+	}
+};
+#endif
