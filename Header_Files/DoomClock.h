@@ -80,11 +80,11 @@ doomClock::doomClock(string a)
 	alarmGoingOff = false;
 	placeholder = false;
 	filename = a;
-	fstream dataFile;
-	dataFile.open(filename);
+	//fstream dataFile;
+	//dataFile.open(filename);
 	Events *hold = new Events;
 	//   CHECK THOROUGHLY!!!!!!!!!!!!!!!!!!!!!
-	processFile(head, hold, a);
+	//processFile(head, hold, a);
 	//sortList();---------------------------------------------------------------------------------------------------
 };
 
@@ -292,6 +292,10 @@ void doomClock::userLoop()
 //runs the alarm
 void doomClock::alarmLoop()
 {
+	Events* viewer = new Events;
+	Events* viewed = new Events;
+	viewer = head;
+	viewed = viewer;
 	using chrono::system_clock;
 	time_t tt = system_clock::to_time_t(system_clock::now());
 	struct tm * ptm = localtime(&tt);
@@ -306,6 +310,18 @@ void doomClock::alarmLoop()
 		};
 		if (head && (mktime((&head->when)) <= tt))
 			alarmGoingOff = true;
+		while (viewer)
+		{
+			if (viewer && (mktime((&viewer->when)) <= tt))
+			{
+				alarmGoingOff = true;
+				viewed->next = viewer->next;
+				viewer->next = head;
+				head = viewer;
+				break;
+			}
+
+		}
 		if (alarmGoingOff)
 		{
 			while (alarmGoingOff)
