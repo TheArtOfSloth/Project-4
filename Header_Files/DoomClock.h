@@ -59,6 +59,7 @@ private:
 	void userLoop();
 	void alarmLoop();
 	void sortList();
+	void processFile(Events*, Events*, string);
 	Events *mergeSort(Events*);
 	Events *merge(Events*, Events*);
 	thread t1;
@@ -75,12 +76,6 @@ private:
 //class constructor
 doomClock::doomClock(string a)
 {
-	int y;
-	int b;
-	int c;
-	int d;
-	int e;
-	string f;
 	isRunning = true;
 	alarmGoingOff = false;
 	placeholder = false;
@@ -89,47 +84,7 @@ doomClock::doomClock(string a)
 	dataFile.open(filename);
 	Events *hold = new Events;
 	//   CHECK THOROUGHLY!!!!!!!!!!!!!!!!!!!!!
-	while (dataFile.good())
-	{
-		dataFile >> y >> b >> c >> d >> e >> f;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-		//Events *temp = new Events;
-		//dataFile >> temp->when.tm_year >> temp->when.tm_mon >> temp->when.tm_mday >> temp->when.tm_hour >> temp->when.tm_min >> temp->alarmName;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		if (!head)
-		{
-			addAlarm2(y, b, c, d, e, f);
-			//dataFile >> head->when.tm_year >> head->when.tm_mon >> head->when.tm_mday >> head->when.tm_hour >> head->when.tm_min >> head->alarmName;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			/*
-			head->when.tm_year = temp->when.tm_year;
-			head->when.tm_mon = temp->when.tm_mon;
-			head->when.tm_mday = temp->when.tm_mday;
-			head->when.tm_hour = temp->when.tm_hour;
-			head->when.tm_min = temp->when.tm_min;
-			head->alarmName = temp->alarmName;
-			*/
-			head->next = hold;
-			
-		}
-		else
-		{
-			addAlarm3(hold, y, b, c, d, e, f);
-			//hold = temp;
-			//dataFile >> hold->when.tm_year >> hold->when.tm_mon >> hold->when.tm_mday >> hold->when.tm_hour >> hold->when.tm_min >> hold->alarmName;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			/*
-			hold->when.tm_year = temp->when.tm_year;
-			hold->when.tm_mon = temp->when.tm_mon;
-			hold->when.tm_mday = temp->when.tm_mday;
-			hold->when.tm_hour = temp->when.tm_hour;
-			hold->when.tm_min = temp->when.tm_min;
-			hold->alarmName = temp->alarmName;
-			*/
-			hold = hold->next;
-			hold = nullptr;
-		}
-	}
-	//   CHECK THOROUGHLY!!!!!!!!!!!!!!!!!!!!!
-	delete hold;
-	dataFile.close();
+	processFile(head, hold, a);
 	//sortList();---------------------------------------------------------------------------------------------------
 };
 
@@ -143,6 +98,24 @@ doomClock::~doomClock()
 		head = head->next;
 		delete nodeptr;
 	}
+};
+
+void doomClock::processFile(Events *a, Events *b, string d)
+{
+	string filename = d;
+	fstream dataFile;
+	dataFile.open(filename);
+	while (dataFile.good())
+	{
+		Events *temp = new Events;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		dataFile >> temp->when.tm_year >> temp->when.tm_mon >> temp->when.tm_mday >> temp->when.tm_hour >> temp->when.tm_min >> temp->alarmName;	//LIKELY ISSUES HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		temp->when.tm_sec = 0;
+		a = temp;
+		b->next = a;
+		a = b;
+	};
+	dataFile.close();
+	a = a->next;
 };
 
 //adds alarm
@@ -163,9 +136,10 @@ void doomClock::addAlarm()
 	cin >> temp->when.tm_hour;
 	cout << "please enter the minute of the alarm, from 0-59: ";
 	cin >> temp->when.tm_min;
+	temp->when.tm_sec = 0;
 	temp->next = head;
 	head = temp;
-	//sortList();-----------------------------------------------------------------------------------------
+	//sortList();//-----------------------------------------------------------------------------------------
 };
 
 void doomClock::addAlarm2(int a, int b, int c, int d, int e, string f)
@@ -250,7 +224,7 @@ void doomClock::viewNextAlarm()
 	if (head != NULL) {
 		cout << "The next scheduled event is " << head->alarmName << endl;
 		cout << "It is scheduled for ";
-		cout << head->when.tm_hour << ":" << head->when.tm_min << " on " << (head->when.tm_mon)+1 << "/" << head->when.tm_mday << "/" << (head->when.tm_year)+1900 << endl;
+		cout << head->when.tm_hour << ":" << head->when.tm_min << " on " << (head->when.tm_mon) + 1 << "/" << head->when.tm_mday << "/" << (head->when.tm_year) + 1900 << endl;
 	}
 
 	else {
@@ -297,7 +271,7 @@ void doomClock::userLoop()
 			case 4:
 			{
 				isRunning = false;
-				
+
 				break;
 			};
 			case 5:
@@ -330,6 +304,8 @@ void doomClock::alarmLoop()
 			placeholder = false;
 			alarmGoingOff = true;
 		};
+		if (head && (mktime((&head->when)) <= tt))
+			alarmGoingOff = true;
 		if (alarmGoingOff)
 		{
 			while (alarmGoingOff)
